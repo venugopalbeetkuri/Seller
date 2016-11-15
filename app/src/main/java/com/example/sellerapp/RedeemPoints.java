@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -13,6 +14,11 @@ import com.example.R;
 import com.example.db.EarnBO;
 import com.example.db.MongoDB;
 import com.example.db.RedeemBO;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
@@ -21,12 +27,17 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 import java.net.InetAddress;
+import java.util.Map;
 
 
 public class RedeemPoints extends AppCompatActivity {
 
 
     String userId, storeId, bill, points, discount;
+    TextView redeemPoints,billAmount,discountAmount;
+    DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference clientDatabase = database.child("client");
+
 
     final static String log = "Seller app";
 
@@ -36,6 +47,9 @@ public class RedeemPoints extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_redeem);
 
+        billAmount = (TextView) findViewById(R.id.billAmount);
+        redeemPoints = (TextView) findViewById(R.id.redeemPoints);
+        discountAmount = (TextView) findViewById(R.id.discountAmount);
         Intent intent = getIntent();
 
         userId = intent.getStringExtra("userId");
@@ -44,14 +58,11 @@ public class RedeemPoints extends AppCompatActivity {
         points = intent.getStringExtra("points");
         discount = intent.getStringExtra("discount");
 
-        TextView redeemPoints = (TextView) findViewById(R.id.redeemPoints);
-        redeemPoints.setText(points);
 
-        TextView billAmount = (TextView) findViewById(R.id.billAmount);
-        billAmount.setText(bill);
 
-        TextView discountAmount = (TextView) findViewById(R.id.discountAmount);
-        discountAmount.setText(discount);
+        redeemPoints.setText("20");
+        billAmount.setText("40");
+        discountAmount.setText("10");
 
         addListenerOnAcceptButton();
         addListenerOnCancelButton();
@@ -63,13 +74,14 @@ public class RedeemPoints extends AppCompatActivity {
      */
     public void addListenerOnCancelButton() {
 
-        Button earnButton = (Button) findViewById(R.id.earnCancelButton);
+        Button earnButton = (Button) findViewById(R.id.redeemCancelButton);
 
         earnButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
 
+                arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
                 Intent itt = new Intent(RedeemPoints.this, ReportPoints.class);
                 itt.putExtra("storeId", storeId);
                 startActivity(itt);
@@ -85,17 +97,23 @@ public class RedeemPoints extends AppCompatActivity {
      */
     public void addListenerOnAcceptButton() {
 
-        Button earnButton = (Button) findViewById(R.id.earnButton);
+        Button earnButton = (Button) findViewById(R.id.redeemButton);
 
         earnButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
 
-                RedeemBO redeemBO = new RedeemBO(userId, storeId, bill, points, discount);
+                RedeemBO redeemBO = new RedeemBO("Ravi", "Ravi Store", "20", "30","50");
+                clientDatabase.setValue(redeemBO);
 
+                arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
+                //RedeemBO redeemBO = new RedeemBO(userId, storeId, bill, points, discount);
+                Intent itt = new Intent(RedeemPoints.this, ReportPoints.class);
+                itt.putExtra("storeId", storeId);
+                startActivity(itt);
                 // MongoDB db = new MongoDB();
-                insertRecordRedeem(redeemBO);
+                // insertRecordRedeem(redeemBO);
 
 
             }

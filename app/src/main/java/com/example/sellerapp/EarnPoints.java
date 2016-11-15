@@ -6,11 +6,18 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.R;
 import com.example.db.EarnBO;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
@@ -19,12 +26,15 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 import java.net.InetAddress;
+import java.util.Map;
 
 public class EarnPoints extends AppCompatActivity {
 
 
     String userId,storeId,points, bill;
-
+    DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference clientDatabase = database.child("client");
+    TextView redeemPoints,billAmount;
     final static String log = "Seller app";
 
     @Override
@@ -34,17 +44,17 @@ public class EarnPoints extends AppCompatActivity {
         setContentView(R.layout.activity_earn);
 
         Intent intent = getIntent();
+        redeemPoints = (TextView) findViewById(R.id.earnPoints);
+        billAmount = (TextView) findViewById(R.id.billamount);
 
         points = intent.getStringExtra("points");
         bill = intent.getStringExtra("billAmount");
         userId = intent.getStringExtra("userId");
         storeId = intent.getStringExtra("storeId");
 
-        TextView redeemPoints = (TextView) findViewById(R.id.points);
-        redeemPoints.setText(points);
 
-        TextView billAmount = (TextView) findViewById(R.id.billAmountEarn);
-        billAmount.setText(bill);
+        redeemPoints.setText("40");
+        billAmount.setText("30");
 
         addListenerOnAcceptButton();
         addListenerOnCancelButton();
@@ -57,13 +67,14 @@ public class EarnPoints extends AppCompatActivity {
      */
     public void addListenerOnCancelButton() {
 
-        Button earnButton = (Button) findViewById(R.id.earnCancelButton);
+        Button earnButton = (Button) findViewById(R.id.redeemCancelButton);
 
         earnButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
 
+                arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
                 Intent itt = new Intent(EarnPoints.this, ReportPoints.class);
                 itt.putExtra("storeId", storeId);
                 startActivity(itt);
@@ -79,17 +90,27 @@ public class EarnPoints extends AppCompatActivity {
      */
     public void addListenerOnAcceptButton() {
 
-        Button earnButton = (Button) findViewById(R.id.earnButton);
+        Button earnButton = (Button) findViewById(R.id.redeemButton);
 
         earnButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
 
-                EarnBO earn = new EarnBO(userId, storeId, bill, points);
+                EarnBO earnBO = new EarnBO("Ravi", "Ravi Store", "50", "50");
+                clientDatabase.setValue(earnBO);
 
+                String msg = clientDatabase.getKey().toString();
+
+                //Toast.makeText(getApplication(),msg,Toast.LENGTH_LONG).show();
+                arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
+
+                Intent itt = new Intent(EarnPoints.this, ReportPoints.class);
+                itt.putExtra("storeId", storeId);
+                startActivity(itt);
+                // EarnBO earn = new EarnBO(userId, storeId, bill, points);
                 // MongoDB db = new MongoDB();
-                insertRecordEarn(earn);
+                //insertRecordEarn(earn);
 
 
             }

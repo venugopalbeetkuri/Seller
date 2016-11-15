@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example">
 
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
@@ -9,18 +11,19 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 
     <application
+
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".wifidirect.WifiDirectReceive">
+        <activity android:name=".wifidirect.WifiDirectReceive"
+            android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,11 +31,28 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".sellerapp.RedeemPoints" />
+        <activity android:name=".login.LoginActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".sellerapp.EarnPoints" />
+        <activity android:name=".sellerapp.RedeemPoints"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".sellerapp.ReportPoints" />
+        <activity android:name=".sellerapp.EarnPoints"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".sellerapp.ReportPoints"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".login.MainActivity_login"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".login.ProfileActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".sellerapp.MainActivity"
+            android:screenOrientation="portrait" />
+
+
     </application>
 
 </manifest>

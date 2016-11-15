@@ -11,11 +11,6 @@ import com.example.R;
 import java.util.HashMap;
 import java.util.List;
 
-
-/**
- * Created by Venu on 24-10-2016.
- */
-
 public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.MyHolder> {
 
     private List<HashMap<String, String>> mList;
