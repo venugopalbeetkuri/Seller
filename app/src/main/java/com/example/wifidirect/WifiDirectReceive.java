@@ -16,6 +16,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -271,7 +274,12 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(View view)
+    {
+        Animation rotation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.buttonrotate);
+        //rotation.setRepeatCount(Animation.ABSOLUTE);
+        rotation.start();
+        view.startAnimation(rotation);
         ResetReceiver();
     }
 }

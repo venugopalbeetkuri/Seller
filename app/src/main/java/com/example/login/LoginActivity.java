@@ -117,7 +117,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             editTextEmail.setText("");
                             editTextPassword.setText("");
                             finish();
-                            String str=null;
                             Toast.makeText(getApplicationContext(),"Welcome to Seller App !!!",Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
