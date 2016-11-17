@@ -27,15 +27,14 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-
     private static final String LOGIN_CRADINTIALS = "LOGIN_CRADINTIALS";
     private static final String MY_PREFS_NAME = "";
-    //defining views
+
+    // defining views
     private Button buttonSignIn;
     private EditText editTextEmail;
     private EditText editTextPassword;
     private TextView textViewSignup;
-
 
     //firebase auth object
     private FirebaseAuth firebaseAuth;
@@ -44,16 +43,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //progress dialog
     private ProgressDialog progressDialog;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //getting firebase auth object
+        // Getting firebase auth object.
         firebaseAuth = FirebaseAuth.getInstance();
 
-        //if the objects getcurrentuser method is not null
+        // if the objects getcurrentuser method is not null
         //means user is already logged in
         if (firebaseAuth.getCurrentUser() != null) {
             //close this activity
@@ -98,30 +97,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-        //if the email and password are not empty
-        //displaying a progress dialog
-
+        // If the email and password are not empty displaying a progress dialog
         progressDialog.setMessage("Please Wait...");
         progressDialog.show();
 
-        //logging in the user
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        // Logging in the user.
+        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
                         progressDialog.dismiss();
-                        //if the task is successfull
+
+                        // If the task is successful.
                         if (task.isSuccessful()) {
-                            //start the profile activity
-                            //finish();
+
+                            //start the profile activity finish();
                             editTextEmail.setText("");
                             editTextPassword.setText("");
                             finish();
-                            Toast.makeText(getApplicationContext(),"Welcome to Seller App !!!",Toast.LENGTH_SHORT).show();
+                            String str=null;
+
+                            //Toast.makeText(getApplicationContext(),"Welcome to Seller App !!!",Toast.LENGTH_SHORT).show();
+
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        }
-                        else
-                        {
+                        } else {
+
                             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                             v.vibrate(500);
                             Toast.makeText(getApplicationContext(),"Please enter your valid Email and Password",Toast.LENGTH_LONG).show();
@@ -131,19 +131,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-
     @Override
     public void onClick(View view) {
+
         if (view == buttonSignIn) {
             userLogin();
         }
 
         if (view == textViewSignup) {
-            //finish();
+            // finish();
             startActivity(new Intent(this, MainActivity_login.class));
         }
     }
-
 
 }
 
