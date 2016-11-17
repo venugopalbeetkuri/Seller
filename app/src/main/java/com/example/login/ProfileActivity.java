@@ -13,54 +13,59 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
-    //firebase auth object
+    // Firebase auth object.
     private FirebaseAuth firebaseAuth;
 
-    //view objects
+    // View objects.
     private TextView textViewUserEmail;
     private Button buttonLogout;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        //initializing firebase authentication object
+        // Initializing firebase authentication object.
         firebaseAuth = FirebaseAuth.getInstance();
 
-        //if the user is not logged in
-        //that means current user will return null
-        if(firebaseAuth.getCurrentUser() == null){
-            //closing this activity
+        // If the user is not logged in that means current user will return null.
+        if (firebaseAuth.getCurrentUser() == null) {
+
+            // Closing this activity.
             finish();
-            //starting login activity
+
+            // Starting login activity.
             startActivity(new Intent(this, LoginActivity.class));
         }
 
-        //getting current user
+        // Getting current user.
         FirebaseUser user = firebaseAuth.getCurrentUser();
 
-        //initializing views
+        // Initializing views.
         textViewUserEmail = (TextView) findViewById(R.id.textViewUserEmail);
         buttonLogout = (Button) findViewById(R.id.buttonLogout);
 
-        //displaying logged in user name
-        textViewUserEmail.setText("Welcome "+user.getEmail());
+        // Displaying logged in user name.
+        textViewUserEmail.setText("Welcome " + user.getEmail());
 
-        //adding listener to button
+        // Adding listener to button.
         buttonLogout.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        //if logout is pressed
-        if(view == buttonLogout){
-            //logging out the user
+
+        // If logout is pressed.
+        if (view == buttonLogout) {
+
+            // Logging out the user.
             firebaseAuth.signOut();
-            //closing activity
+
+            // Closing activity.
             finish();
-            //starting login activity
+
+            // Starting login activity.
             startActivity(new Intent(this, LoginActivity.class));
         }
     }
