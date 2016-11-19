@@ -47,20 +47,6 @@ public class MainActivity extends AppCompatActivity {
     Button earnButton = null;
     Button redeemButton = null;
 
-    // Name for the SDP record when creating server socket
-    private static final String NAME_SECURE = "BluetoothChatSecure";
-    private static final String NAME_INSECURE = "BluetoothChatInsecure";
-
-    // Unique UUID for this application
-    private static final UUID MY_UUID_SECURE = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
-    private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
-
-    //private BluetoothAdapter mAdapter = null;
-
-    //ConnectedThread connectedThread = null;
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -76,15 +62,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
         earnButton = (Button) findViewById(R.id.buttonEarn);
-
-        // String userId = "Khaizar";
-        // String points = "500";
-        // String billAmount = "1000";
-        // String discount = "250";
-        // String storeId = "xyz";
-
-        // EarnBO earn = new EarnBO(userId, storeId, billAmount, points);
-        //MongoDB.getInstance();
 
         earnButton.setOnClickListener(new View.OnClickListener() {
 
@@ -130,75 +107,6 @@ public class MainActivity extends AppCompatActivity {
         /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);*/
         return super.onOptionsItemSelected(item);
-
-    }
-
-
-    private void sendNotification(String storeId, String type, String userId, String points, String billAmount, String discount) {
-
-        // Create Notification Builder.
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-
-        // Setting Notification Properties.
-        mBuilder.setSmallIcon(R.drawable.bell);
-
-        // mBuilder.setContentTitle("Notification Alert, Click Me!");
-        // mBuilder.setContentText("Hi, This is Android Notification Detail!");
-
-        if("Earn".equalsIgnoreCase(type)) {
-
-            mBuilder.setContentTitle(userId + " : " + "would like to earn points from your store.");
-            mBuilder.setContentText("Earn " + points + " request. For bill amount: " + billAmount);
-        } else if("Redeem".equalsIgnoreCase(type)) {
-
-            mBuilder.setContentTitle(userId + " : " + "would like to redeem points from your store.");
-            mBuilder.setContentText("Redeem " + points + " request. For bill amount: " + billAmount);
-        }
-
-        // Cancel the notification after its selected
-        mBuilder.setAutoCancel(true);
-
-        // Attach Actions.
-        if ("Redeem".equalsIgnoreCase(type)) {
-
-            Intent redeemIntent =  new Intent(this, RedeemPoints.class);
-
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addParentStack(RedeemPoints.class);
-            redeemIntent.putExtra("points", points);
-            redeemIntent.putExtra("billAmount", billAmount);
-            redeemIntent.putExtra("discount", discount);
-            redeemIntent.putExtra("userId", userId);
-            redeemIntent.putExtra("storeId", storeId);
-
-            // Adds the Intent that starts the Activity to the top of the stack.
-            stackBuilder.addNextIntent(redeemIntent);
-            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-            mBuilder.setContentIntent(resultPendingIntent);
-
-        } else if ("Earn".equalsIgnoreCase(type)) {
-
-            Intent earnIntent =  new Intent(this, EarnPoints.class);
-
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addParentStack(EarnPoints.class);
-            earnIntent.putExtra("points", points);
-            earnIntent.putExtra("billAmount", billAmount);
-            earnIntent.putExtra("userId", userId);
-            earnIntent.putExtra("storeId", storeId);
-
-            // Adds the Intent that starts the Activity to the top of the stack.
-            stackBuilder.addNextIntent(earnIntent);
-            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
-            mBuilder.setContentIntent(resultPendingIntent);
-
-        }
-
-        // Issue the notification.
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // NotificationID allows you to update the notification later on.
-        mNotificationManager.notify(0, mBuilder.build());
 
     }
 

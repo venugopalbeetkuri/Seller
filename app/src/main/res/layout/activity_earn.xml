@@ -127,7 +127,7 @@
             android:textStyle="bold|italic"
             android:textSize="25dp"
             android:background="@drawable/cancelbuttonshape"
-            android:id="@+id/redeemCancelButton"/>
+            android:id="@+id/earnCancelButton"/>
 
         <Button
             android:layout_weight="1"
@@ -138,7 +138,7 @@
             android:textStyle="bold|italic"
             android:textSize="25dp"
             android:background="@drawable/acceptbuttonshape"
-            android:id="@+id/redeemButton"/>
+            android:id="@+id/earnAcceptButton"/>
 
     </LinearLayout>
 

@@ -1,6 +1,7 @@
 package com.example.wifidirect;
 
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -29,14 +30,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.example.R;
+import com.example.sellerapp.EarnPoints;
 import com.example.wifidirect.Adapter.WifiAdapter;
 import com.example.wifidirect.BroadcastReceiver.WifiDirectBroadcastReceiver;
 import com.example.wifidirect.Task.DataServerAsyncTask;
+
+import com.google.gson.Gson;
 
 public class WifiDirectReceive extends AppCompatActivity implements View.OnClickListener {
 
 
     TextView txtView;
+    //String receivedata;
 
     RecyclerView mRecyclerView;
     WifiAdapter mAdapter;
@@ -68,7 +73,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         initIntentFilter();
         initReceiver();
         initEvents();
-
+        getTxtView();
         discoverPeers();
     }
 
@@ -153,12 +158,23 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
                     mDataTask = new DataServerAsyncTask(WifiDirectReceive.this, txtView);
                     mDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
+                   /* Beam ob=new Beam();
 
+                    String data=ob.getResult();
+                    //Toast.makeText(getApplicationContext(),data,Toast.LENGTH_LONG).show();*//*
+                    Intent intent=new Intent(WifiDirectReceive.this, EarnPoints.class);
+                    startActivity(intent);*/
+                }
             }
         };
 
         mReceiver = new WifiDirectBroadcastReceiver(mManager, mChannel, this, mPeerListListerner, mInfoListener);
+    }
+
+
+    public void getTxtView() {
+
+        Toast.makeText(getApplicationContext(),txtView.getText().toString(),Toast.LENGTH_LONG).show();
     }
 
     private void createConnect(String address, final String name) {
@@ -277,9 +293,9 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     public void onClick(View view)
     {
         Animation rotation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.buttonrotate);
-        //rotation.setRepeatCount(Animation.ABSOLUTE);
         rotation.start();
         view.startAnimation(rotation);
         ResetReceiver();
     }
+
 }

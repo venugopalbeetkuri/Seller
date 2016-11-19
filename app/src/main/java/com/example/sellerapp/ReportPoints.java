@@ -17,11 +17,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Map;
 
-
 public class ReportPoints extends AppCompatActivity {
-
 
     TextView pointsGiven,totalsale,totaldiscount;
     String points,sale,disco;
@@ -34,11 +34,7 @@ public class ReportPoints extends AppCompatActivity {
         setContentView(R.layout.activity_report);
 
         pointsGiven = (TextView) findViewById(R.id.pointsgiven);
-
-
         totalsale = (TextView) findViewById(R.id.totalsale);
-
-
         totaldiscount=(TextView) findViewById(R.id.discountgiven);
 
         clientDatabase.addValueEventListener(new ValueEventListener() {
@@ -48,12 +44,12 @@ public class ReportPoints extends AppCompatActivity {
                 Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
 
                 //points = map.get("earned").toString();
-                sale = map.get("billAmount").toString();
+                //sale = map.get("billAmount").toString();
                 //disco = map.get("discountAmount");
                 Log.v("E_Value","points : "+points);
                 Log.v("E_Value","sale : "+sale);
                 //pointsGiven.setText(points);
-                totalsale.setText(sale);
+                //totalsale.setText(sale);
                 /*totaldiscount.setText(disco);*/
 
             }
