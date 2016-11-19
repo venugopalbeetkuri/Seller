@@ -44,15 +44,17 @@ public class MainActivity_login extends AppCompatActivity implements View.OnClic
         // If getCurrentUser does not returns null.
         if (firebaseAuth.getCurrentUser() != null) {
 
+
             // That means user is already logged in so close this activity and open profile activity.
             finish();
             startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+            //and open profile activity
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
 
         // Initializing views.
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
-        textViewSignin = (TextView) findViewById(R.id.textViewSignin);
         buttonSignup = (Button) findViewById(R.id.buttonSignup);
 
         progressDialog = new ProgressDialog(this);
