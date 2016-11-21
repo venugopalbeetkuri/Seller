@@ -116,6 +116,17 @@ public class EarnPoints extends AppCompatActivity {
                         HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
                         String type = timeStampKey.get("type");
                         String pointsStr = timeStampKey.get("points");
+                        String billAmountStr = timeStampKey.get("billAmount");
+                        String discountAmountStr = timeStampKey.get("disCountAmount");
+
+                        int billAmount = Integer.parseInt(billAmountStr);
+                        Utility.totalBillAmount = Utility.totalBillAmount + billAmount;
+
+                        if(null == discountAmountStr){
+                            discountAmountStr = "0";
+                        }
+                        int discountAmount = Integer.parseInt(discountAmountStr);
+                        Utility.totalDiscount = Utility.totalDiscount + discountAmount;
 
                         if("Earn".equalsIgnoreCase(type)) {
 

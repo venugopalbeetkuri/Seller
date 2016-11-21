@@ -17,6 +17,10 @@ public class Utility {
 
     public static int totalRedeemPoints;
 
+    public static int totalBillAmount;
+
+    public static int totalDiscount;
+
     public static synchronized Gson getGsonObject() {
 
         if(null == gson){

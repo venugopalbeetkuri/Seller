@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class ReportPoints extends AppCompatActivity {
 
-    TextView pointsGiven,totalsale,totaldiscount;
+    TextView pointsGiven, totalsale, totaldiscount;
     String points,sale,disco;
     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     DatabaseReference clientDatabase = database.child("client");
@@ -36,12 +36,16 @@ public class ReportPoints extends AppCompatActivity {
         setContentView(R.layout.activity_report);
 
         Integer totalPoints = Utility.totalEarnPoints - Utility.totalRedeemPoints;
+        Integer totalBillAmount = Utility.totalBillAmount;
+        Integer totalDiscountmount = Utility.totalDiscount;
 
         pointsGiven = (TextView) findViewById(R.id.pointsgiven);
         totalsale = (TextView) findViewById(R.id.totalsale);
         totaldiscount=(TextView) findViewById(R.id.discountgiven);
 
         pointsGiven.setText(totalPoints.toString());
+        totalsale.setText(totalBillAmount.toString());
+        totaldiscount.setText(totalDiscountmount.toString());
 
     }
 

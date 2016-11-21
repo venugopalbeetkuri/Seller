@@ -11,20 +11,21 @@ public class PointsBO {
     String storeName;
     String points;
     String deviceId;
+    String disCountAmount;
 
 
     public PointsBO(String type,
             String billAmount,
             String storeName,
             String points,
-            String deviceId){
+            String deviceId, String disCountAmount){
 
         this.type = type;
         this.billAmount =billAmount;
         this.storeName = storeName;
         this.points = points;
         this.deviceId = deviceId;
-
+        this.disCountAmount = disCountAmount;
     }
 
 
@@ -66,5 +67,13 @@ public class PointsBO {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getDisCountAmount() {
+        return disCountAmount;
+    }
+
+    public void setDisCountAmount(String disCountAmount) {
+        this.disCountAmount = disCountAmount;
     }
 }
