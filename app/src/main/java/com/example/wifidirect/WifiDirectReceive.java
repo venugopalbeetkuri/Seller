@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +37,6 @@ import com.example.wifidirect.Adapter.WifiAdapter;
 import com.example.wifidirect.BroadcastReceiver.WifiDirectBroadcastReceiver;
 import com.example.wifidirect.Task.DataServerAsyncTask;
 
-import com.google.firebase.FirebaseException;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,9 +47,7 @@ import com.google.gson.Gson;
 
 public class WifiDirectReceive extends AppCompatActivity implements View.OnClickListener {
 
-
     TextView txtView;
-    //String receivedata;
 
     RecyclerView mRecyclerView;
     WifiAdapter mAdapter;
@@ -63,12 +59,10 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     private IntentFilter mFilter;
     private WifiP2pInfo info;
 
-
     private DataServerAsyncTask mDataTask;
 
     // For peers information.
     private List<HashMap<String, String>> peersshow = new ArrayList();
-
 
     // All the peers.
     private List peers = new ArrayList();
@@ -78,6 +72,8 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wifi_direct_client);
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         initView();
         initIntentFilter();
@@ -168,19 +164,12 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
                     mDataTask = new DataServerAsyncTask(WifiDirectReceive.this, txtView);
                     mDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                   /* Beam ob=new Beam();
-
-                    String data=ob.getResult();
-                    //Toast.makeText(getApplicationContext(),data,Toast.LENGTH_LONG).show();*//*
-                    Intent intent=new Intent(WifiDirectReceive.this, EarnPoints.class);
-                    startActivity(intent);*/
                 }
             }
         };
 
         mReceiver = new WifiDirectBroadcastReceiver(mManager, mChannel, this, mPeerListListerner, mInfoListener);
     }
-
 
     public void getTxtView() {
 
@@ -302,37 +291,33 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     @Override
     public void onClick(View view) {
 
-
         Animation rotation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.buttonrotate);
         rotation.start();
         view.startAnimation(rotation);
 
-
         Utility.totalEarnPoints = 0;
         Utility.totalRedeemPoints = 0;
 
-        calculateTotal("venu-xyz");
+        if(Utility.isTesting()) {
 
+            calculateTotal("venu-xyz");
+            // saveDataToFireBase();
+        } else {
+            ResetReceiver();
+        }
 
-         // saveDataToFireBase();
-        // ResetReceiver();
     }
 
     private void saveDataToFireBase(){
         try {
+
             Gson gson = new Gson();
-            PointsBO points = new PointsBO("Earn",
-                    "2000",
-                    "venu-xyz",
-                    "200",
-                    "xyz");
-
-
+            PointsBO points = new PointsBO("Earn", "2000", "venu-xyz", "200", "xyz");
             String result = gson.toJson(points);
 
             Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
             String type = points.getType().toString();
-            //saveToFireBase(points);
+
             if(type.equalsIgnoreCase("Earn")){
                 Intent intent = new Intent(this,EarnPoints.class);
                 intent.putExtra("earnRedeemString", result);
@@ -366,12 +351,6 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
                         HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
                         String type = timeStampKey.get("type");
                         String pointsStr = timeStampKey.get("points");
-
-                        //valueMap.get();
-
-                        // Gson gson = Utility.getGsonObject();
-                        // PointsBO pointsBO = gson.fromJson(timeStampKey, PointsBO.class);
-
 
                         if("Earn".equalsIgnoreCase(type)) {
 
