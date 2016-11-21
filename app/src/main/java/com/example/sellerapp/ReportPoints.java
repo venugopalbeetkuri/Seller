@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.R;
 import com.example.db.ReportBO;
+import com.example.util.Utility;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,38 +28,20 @@ public class ReportPoints extends AppCompatActivity {
     String points,sale,disco;
     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     DatabaseReference clientDatabase = database.child("client");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
+        Integer totalPoints = Utility.totalEarnPoints - Utility.totalRedeemPoints;
+
         pointsGiven = (TextView) findViewById(R.id.pointsgiven);
         totalsale = (TextView) findViewById(R.id.totalsale);
         totaldiscount=(TextView) findViewById(R.id.discountgiven);
 
-        clientDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
-
-                //points = map.get("earned").toString();
-                //sale = map.get("billAmount").toString();
-                //disco = map.get("discountAmount");
-                Log.v("E_Value","points : "+points);
-                Log.v("E_Value","sale : "+sale);
-                //pointsGiven.setText(points);
-                //totalsale.setText(sale);
-                /*totaldiscount.setText(disco);*/
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        pointsGiven.setText(totalPoints.toString());
 
     }
 

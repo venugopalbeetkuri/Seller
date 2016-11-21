@@ -11,7 +11,7 @@ public class Utility {
 
     static Gson gson = null;
 
-    static boolean testing = false;
+    static boolean testing = true;
 
     public static int totalEarnPoints;
 

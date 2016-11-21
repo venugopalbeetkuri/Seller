@@ -300,8 +300,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
         if(Utility.isTesting()) {
 
-            calculateTotal("venu-xyz");
-            // saveDataToFireBase();
+            saveDataToFireBase();
         } else {
             ResetReceiver();
         }
@@ -312,7 +311,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         try {
 
             Gson gson = new Gson();
-            PointsBO points = new PointsBO("Earn", "2000", "venu-xyz", "200", "xyz");
+            PointsBO points = new PointsBO("Redeem", "2000", "venu-xyz", "200", "xyz");
             String result = gson.toJson(points);
 
             Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
@@ -329,51 +328,6 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void calculateTotal(String storeName) {
-
-        try {
-
-            DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-            DatabaseReference clientDatabase = database.child("client");
-            Query query  = clientDatabase.child(storeName);
-
-            // Query query = storeDatabase.orderByChild("Earn");
-            query.addValueEventListener(new ValueEventListener() {
-
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
-
-                        HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
-                        String type = timeStampKey.get("type");
-                        String pointsStr = timeStampKey.get("points");
-
-                        if("Earn".equalsIgnoreCase(type)) {
-
-                           int points = Integer.parseInt(pointsStr);
-                            Utility.totalEarnPoints = Utility.totalEarnPoints + points;
-                        } else if("Redeem".equalsIgnoreCase(type)) {
-
-                            int points = Integer.parseInt(pointsStr);
-                            Utility.totalRedeemPoints = Utility.totalRedeemPoints + points;
-                        }
-                    }
-
-                    Toast.makeText(getApplicationContext(), "Total Earn: " + Utility.totalEarnPoints + " Total Redeem: " + Utility.totalRedeemPoints, Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-        }catch(Exception ex){
-            ex.printStackTrace();
         }
     }
 

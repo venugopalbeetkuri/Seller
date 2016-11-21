@@ -7,14 +7,21 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.R;
 import com.example.db.PointsBO;
+import com.example.util.Utility;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class RedeemPoints extends AppCompatActivity {
 
@@ -84,11 +91,61 @@ public class RedeemPoints extends AppCompatActivity {
                 DatabaseReference pointsDB = clientDatabase.child(storeName);
                 DatabaseReference time = pointsDB.child(formattedDate);
                 time.setValue(points);
-                Intent itt = new Intent(RedeemPoints.this, ReportPoints.class);
-                startActivity(itt);
+
+                calculateTotal(storeName);
+
             }
 
         });
     }
+
+    private void calculateTotal(String storeName) {
+
+        try {
+
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference clientDatabase = database.child("client");
+            Query query  = clientDatabase.child(storeName);
+
+            // Query query = storeDatabase.orderByChild("Earn");
+            query.addValueEventListener(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
+
+                        HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
+                        String type = timeStampKey.get("type");
+                        String pointsStr = timeStampKey.get("points");
+
+                        if("Earn".equalsIgnoreCase(type)) {
+
+                            int points = Integer.parseInt(pointsStr);
+                            Utility.totalEarnPoints = Utility.totalEarnPoints + points;
+                        } else if("Redeem".equalsIgnoreCase(type)) {
+
+                            int points = Integer.parseInt(pointsStr);
+                            Utility.totalRedeemPoints = Utility.totalRedeemPoints + points;
+                        }
+                    }
+
+                    Toast.makeText(getApplicationContext(), "Total Earn: " + Utility.totalEarnPoints + " Total Redeem: " + Utility.totalRedeemPoints, Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(RedeemPoints.this, ReportPoints.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
 
 }
