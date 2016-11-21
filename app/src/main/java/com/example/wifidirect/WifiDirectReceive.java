@@ -30,11 +30,21 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.example.R;
+import com.example.db.PointsBO;
 import com.example.sellerapp.EarnPoints;
+import com.example.sellerapp.RedeemPoints;
+import com.example.util.Utility;
 import com.example.wifidirect.Adapter.WifiAdapter;
 import com.example.wifidirect.BroadcastReceiver.WifiDirectBroadcastReceiver;
 import com.example.wifidirect.Task.DataServerAsyncTask;
 
+import com.google.firebase.FirebaseException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 public class WifiDirectReceive extends AppCompatActivity implements View.OnClickListener {
@@ -290,12 +300,102 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     }
 
     @Override
-    public void onClick(View view)
-    {
+    public void onClick(View view) {
+
+
         Animation rotation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.buttonrotate);
         rotation.start();
         view.startAnimation(rotation);
-        ResetReceiver();
+
+
+        Utility.totalEarnPoints = 0;
+        Utility.totalRedeemPoints = 0;
+
+        calculateTotal("venu-xyz");
+
+
+         // saveDataToFireBase();
+        // ResetReceiver();
+    }
+
+    private void saveDataToFireBase(){
+        try {
+            Gson gson = new Gson();
+            PointsBO points = new PointsBO("Earn",
+                    "2000",
+                    "venu-xyz",
+                    "200",
+                    "xyz");
+
+
+            String result = gson.toJson(points);
+
+            Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
+            String type = points.getType().toString();
+            //saveToFireBase(points);
+            if(type.equalsIgnoreCase("Earn")){
+                Intent intent = new Intent(this,EarnPoints.class);
+                intent.putExtra("earnRedeemString", result);
+                startActivity(intent);
+            }else if (type.equalsIgnoreCase("Redeem")){
+                Intent intent = new Intent(this,RedeemPoints.class);
+                intent.putExtra("earnRedeemString", result);
+                startActivity(intent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void calculateTotal(String storeName) {
+
+        try {
+
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference clientDatabase = database.child("client");
+            Query query  = clientDatabase.child(storeName);
+
+            // Query query = storeDatabase.orderByChild("Earn");
+            query.addValueEventListener(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
+
+                        HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
+                        String type = timeStampKey.get("type");
+                        String pointsStr = timeStampKey.get("points");
+
+                        //valueMap.get();
+
+                        // Gson gson = Utility.getGsonObject();
+                        // PointsBO pointsBO = gson.fromJson(timeStampKey, PointsBO.class);
+
+
+                        if("Earn".equalsIgnoreCase(type)) {
+
+                           int points = Integer.parseInt(pointsStr);
+                            Utility.totalEarnPoints = Utility.totalEarnPoints + points;
+                        } else if("Redeem".equalsIgnoreCase(type)) {
+
+                            int points = Integer.parseInt(pointsStr);
+                            Utility.totalRedeemPoints = Utility.totalRedeemPoints + points;
+                        }
+                    }
+
+                    Toast.makeText(getApplicationContext(), "Total Earn: " + Utility.totalEarnPoints + " Total Redeem: " + Utility.totalRedeemPoints, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
 
 }
