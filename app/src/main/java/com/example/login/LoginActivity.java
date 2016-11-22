@@ -1,5 +1,6 @@
 package com.example.login;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -19,13 +20,14 @@ import android.widget.Toast;
 
 import com.example.R;
 import com.example.sellerapp.MainActivity;
+import com.example.wifidirect.WifiDirectReceive;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends Activity implements View.OnClickListener {
 
     private static final String LOGIN_CRADINTIALS = "LOGIN_CRADINTIALS";
     private static final String MY_PREFS_NAME = "";
@@ -58,7 +60,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             //close this activity
             finish();
             //opening profile activity
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), WifiDirectReceive.class));
         }
 
         //initializing views
@@ -86,14 +88,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (TextUtils.isEmpty(email)) {
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(300);
-            Toast.makeText(this, "Please enter email", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please enter Login ID", Toast.LENGTH_LONG).show();
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(300);
-            Toast.makeText(this, "Please enter password", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please enter Login Password", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -119,7 +121,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             //Toast.makeText(getApplicationContext(),"Welcome to Seller App !!!",Toast.LENGTH_SHORT).show();
 
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            startActivity(new Intent(getApplicationContext(), WifiDirectReceive.class));
                         } else {
 
                             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -140,7 +142,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if (view == textViewSignup) {
             // finish();
-            startActivity(new Intent(this, MainActivity_login.class));
+            //startActivity(new Intent(this, MainActivity_login.class));
         }
     }
 

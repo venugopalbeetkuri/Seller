@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".wifidirect.WifiDirectReceive"
+        <activity android:name=".login.LoginActivity"
             android:screenOrientation="portrait">
 
             <intent-filter>
@@ -31,13 +31,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".login.LoginActivity"
+        <activity android:name=".wifidirect.WifiDirectReceive"
             android:screenOrientation="portrait" />
 
         <activity android:name=".sellerapp.RedeemPoints"
             android:screenOrientation="portrait" />
 
         <activity android:name=".sellerapp.EarnPoints"
+            android:theme="@android:style/Theme.Translucent"
             android:screenOrientation="portrait" />
 
         <activity android:name=".sellerapp.ReportPoints"
