@@ -192,7 +192,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
                     Toast.makeText(getApplicationContext(),"WifiP2pManager.ConnectionInfoListener onConnectionInfoAvailable: Group owner.",Toast.LENGTH_SHORT).show();
                     Log.i("bizzmark", "Receive server start.");
 
-                    mDataTask = new DataServerAsyncTask(WifiDirectReceive.this, txtView);
+                    mDataTask = new DataServerAsyncTask(WifiDirectReceive.this);
                     mDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
