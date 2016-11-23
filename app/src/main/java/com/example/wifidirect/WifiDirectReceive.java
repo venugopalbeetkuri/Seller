@@ -41,12 +41,7 @@ import com.example.wifidirect.BroadcastReceiver.WifiDirectBroadcastReceiver;
 import com.example.wifidirect.Task.DataServerAsyncTask;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 public class WifiDirectReceive extends AppCompatActivity implements View.OnClickListener {
@@ -57,7 +52,6 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     WifiAdapter mAdapter;
     Button btnRefresh;
     private FirebaseAuth firebaseAuth;
-
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
@@ -84,17 +78,9 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         firebaseAuth = FirebaseAuth.getInstance();
 
-        Integer totalPoints = Utility.totalEarnPoints - Utility.totalRedeemPoints;
-        Integer totalBillAmount = Utility.totalBillAmount;
-        Integer totalDiscountmount = Utility.totalDiscount;
+        Utility.calculateTotal("venu-xyz");
 
-        pointsGiven = (TextView) findViewById(R.id.pointsgiven);
-        totalsale = (TextView) findViewById(R.id.totalsale);
-        totaldiscount=(TextView) findViewById(R.id.discountgiven);
-
-        pointsGiven.setText(totalPoints.toString());
-        totalsale.setText(totalBillAmount.toString());
-        totaldiscount.setText(totalDiscountmount.toString());
+        updatePoints();
 
         initView();
         initIntentFilter();
@@ -102,6 +88,29 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         initEvents();
         getTxtView();
         discoverPeers();
+    }
+
+    private void updatePoints() {
+        try {
+
+            Integer totalPoints = Utility.totalEarnPoints - Utility.totalRedeemPoints;
+            Integer totalBillAmount = Utility.totalBillAmount;
+            Integer totalDiscountmount = Utility.totalDiscount;
+
+            pointsGiven = (TextView) findViewById(R.id.pointsgiven);
+            totalsale = (TextView) findViewById(R.id.totalsale);
+            totaldiscount=(TextView) findViewById(R.id.discountgiven);
+
+            pointsGiven.setText(totalPoints.toString());
+            totalsale.setText(totalBillAmount.toString());
+            totaldiscount.setText(totalDiscountmount.toString());
+
+            Utility.updateReference(pointsGiven, totalsale, totaldiscount);
+
+
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void initView() {
@@ -315,16 +324,13 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         Animation rotation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.buttonrotate);
         rotation.start();
         refresh.startAnimation(rotation);
-        ResetReceiver();
-        /*Utility.totalEarnPoints = 0;
-        Utility.totalRedeemPoints = 0;
 
         if(Utility.isTesting()) {
 
             saveDataToFireBase();
         } else {
             ResetReceiver();
-        }*/
+        }
 
     }
 
@@ -351,6 +357,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
             e.printStackTrace();
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menuInflater = getMenuInflater();
