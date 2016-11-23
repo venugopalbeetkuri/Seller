@@ -3,8 +3,6 @@ package com.example.wifidirect;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ApplicationInfo;
-import android.net.Uri;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -28,7 +26,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,11 +46,10 @@ import com.google.gson.Gson;
 
 public class WifiDirectReceive extends AppCompatActivity implements View.OnClickListener {
 
-    TextView txtView;
-
-    RecyclerView mRecyclerView;
-    WifiAdapter mAdapter;
-    Button btnRefresh;
+    private TextView txtView;
+    private RecyclerView mRecyclerView;
+    private WifiAdapter mAdapter;
+    private Button btnRefresh;
     private FirebaseAuth firebaseAuth;
 
     private WifiP2pManager mManager;
@@ -61,7 +57,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     private BroadcastReceiver mReceiver;
     private IntentFilter mFilter;
     private WifiP2pInfo info;
-    MenuInflater menuInflater;
+    private MenuInflater menuInflater;
 
     private DataServerAsyncTask mDataTask;
 
@@ -70,7 +66,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
     // All the peers.
     private List peers = new ArrayList();
-    TextView pointsGiven, totalsale, totaldiscount;
+    private TextView pointsGiven, totalsale, totaldiscount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,11 +87,6 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         initEvents();
         getTxtView();
         discoverPeers();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 
     private void updatePoints() {
@@ -200,7 +191,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
                     Toast.makeText(getApplicationContext(),"WifiP2pManager.ConnectionInfoListener onConnectionInfoAvailable: Group owner.",Toast.LENGTH_SHORT).show();
                     Log.i("bizzmark", "Receive server start.");
 
-                    mDataTask = new DataServerAsyncTask(WifiDirectReceive.this,txtView);
+                    mDataTask = new DataServerAsyncTask(WifiDirectReceive.this);
                     mDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
@@ -339,10 +330,9 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         } else {
             ResetReceiver();
         }
-
     }
 
-    private void saveDataToFireBase(){
+    private void saveDataToFireBase() {
         try {
 
             Gson gson = new Gson();
@@ -368,6 +358,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu,menu);
         return super.onCreateOptionsMenu(menu);
@@ -375,34 +366,13 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==R.id.share)
-        {
-            try {
 
-                ApplicationInfo app = getApplicationContext().getApplicationInfo();
-                String filePath = app.sourceDir;
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("*/*");
-
-                // Only use Bluetooth to send .apk
-                // intent.setPackage("com.android.bluetooth");
-
-                // Append file and send Intent
-                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
-                startActivity(Intent.createChooser(intent, "Share app"));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            Toast.makeText(this,"Share the App...",Toast.LENGTH_LONG).show();
-            return super.onOptionsItemSelected(item);
-        }
-        else {
-            firebaseAuth.signOut();
-            finish();
+        firebaseAuth.signOut();
+        finish();
         /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);*/
-            return super.onOptionsItemSelected(item);
-        }
+        return super.onOptionsItemSelected(item);
+
     }
 
 }
