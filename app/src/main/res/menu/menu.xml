@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:title="share"
+        android:id="@+id/share"
+        android:icon="@drawable/share"
+        app:showAsAction="always"/>
+    <item
         android:title="Logout"
         android:id="@+id/logout_menu"
         android:icon="@drawable/logout"

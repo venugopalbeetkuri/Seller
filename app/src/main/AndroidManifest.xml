@@ -15,7 +15,6 @@
 
 
     <application
-
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -31,10 +30,17 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".wifidirect.WifiDirectReceive" android:screenOrientation="portrait" />
-        <activity android:name=".sellerapp.RedeemPoints" android:screenOrientation="portrait" />
-        <activity android:name=".sellerapp.EarnPoints" android:theme="@android:style/Theme.Translucent" android:screenOrientation="portrait" />
-        <activity android:name=".sellerapp.MainActivity" android:screenOrientation="portrait" />
+        <activity android:name=".wifidirect.WifiDirectReceive"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".sellerapp.RedeemPoints"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".sellerapp.EarnPoints"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".sellerapp.MainActivity"
+            android:screenOrientation="portrait" />
 
     </application>
 

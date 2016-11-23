@@ -98,7 +98,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
 
         // If the email and password are not empty displaying a progress dialog
-        progressDialog.setMessage("Please Wait...");
+        progressDialog.setIcon(R.mipmap.progress);
+        progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
         // Logging in the user.

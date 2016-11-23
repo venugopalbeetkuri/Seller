@@ -57,10 +57,11 @@
                 android:id="@+id/earnPoints" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="10dp"
                 android:layout_gravity="center"
-                android:src="@drawable/test"
+                android:src="@drawable/points"
                 android:id="@+id/imageView3"/>
         </LinearLayout>
     </LinearLayout>
@@ -104,9 +105,10 @@
 
             <ImageView
                 android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/test"
+                android:layout_marginLeft="10dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/rupee"
                 android:id="@+id/imageView4"/>
 
         </LinearLayout>

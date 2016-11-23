@@ -19,7 +19,7 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
 
     private WifiDirectReceive activity;
 
-    public DataServerAsyncTask(WifiDirectReceive activity) {
+    public DataServerAsyncTask(WifiDirectReceive activity, TextView txtView) {
 
         this.activity = activity;
     }
