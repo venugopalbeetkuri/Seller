@@ -31,25 +31,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".wifidirect.WifiDirectReceive"
-            android:screenOrientation="portrait" />
-
-        <activity android:name=".sellerapp.RedeemPoints"
-            android:screenOrientation="portrait" />
-
-        <activity android:name=".sellerapp.EarnPoints"
-            android:theme="@android:style/Theme.Translucent"
-            android:screenOrientation="portrait" />
-
-        <activity android:name=".login.MainActivity_login"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".login.ProfileActivity"
-            android:screenOrientation="portrait" />
-
-        <activity android:name=".sellerapp.MainActivity"
-            android:screenOrientation="portrait" />
-
+        <activity android:name=".wifidirect.WifiDirectReceive" android:screenOrientation="portrait" />
+        <activity android:name=".sellerapp.RedeemPoints" android:screenOrientation="portrait" />
+        <activity android:name=".sellerapp.EarnPoints" android:theme="@android:style/Theme.Translucent" android:screenOrientation="portrait" />
+        <activity android:name=".sellerapp.MainActivity" android:screenOrientation="portrait" />
 
     </application>
 
