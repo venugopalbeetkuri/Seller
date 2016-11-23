@@ -61,7 +61,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             startActivity(new Intent(getApplicationContext(), WifiDirectReceive.class));
         }
 
-        //initializing views
+        // initializing views
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         buttonSignIn = (Button) findViewById(R.id.buttonSignin);
@@ -111,13 +111,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                         // If the task is successful.
                         if (task.isSuccessful()) {
 
-                            //start the profile activity finish();
+                            // start the profile activity finish();
                             editTextEmail.setText("");
                             editTextPassword.setText("");
                             finish();
-                            String str=null;
-
-                            //Toast.makeText(getApplicationContext(),"Welcome to Seller App !!!",Toast.LENGTH_SHORT).show();
 
                             startActivity(new Intent(getApplicationContext(), WifiDirectReceive.class));
                         } else {

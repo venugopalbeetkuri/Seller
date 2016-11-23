@@ -66,6 +66,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
     // All the peers.
     private List peers = new ArrayList();
+
     private TextView pointsGiven, totalsale, totaldiscount;
 
     @Override
@@ -105,8 +106,6 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
             totaldiscount.setText(totalDiscountmount.toString());
 
             Utility.updateReference(pointsGiven, totalsale, totaldiscount);
-
-
         } catch(Exception ex) {
             ex.printStackTrace();
         }
