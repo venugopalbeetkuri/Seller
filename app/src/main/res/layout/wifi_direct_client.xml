@@ -2,6 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/wifi_direct_client"
     android:layout_width="match_parent"
@@ -21,18 +22,19 @@
             <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:orientation="vertical">
+            android:layout_weight="1"
+            android:gravity="end"
+            android:orientation="horizontal">
                 <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="test input"
-                android:gravity="start"
-                android:id="@+id/txtReceived"
-                android:textSize="20dp"
-                android:textStyle="italic"
-                android:textColor="#fff"/>
+                    android:id="@+id/tv1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+                    <Button
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="top"
+                        android:background="@drawable/refresh"
+                        android:id="@+id/btnRefresh" />
             </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,17 +52,148 @@
         </ScrollView>
     </LinearLayout>
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="3">
-            <Button
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="end|bottom"
-                android:background="@drawable/refresh"
-                android:id="@+id/btnRefresh" />
+            android:layout_margin="10dp"
+            android:background="#fff"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2">
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textColor="#000"
+                    android:textSize="20dp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:padding="3dip"
+                    android:text="Points given" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:textColor="#000"
+                    android:textSize="20sp"
+                    android:layout_gravity="center"
+                    android:text="01"
+                    android:padding="3dip"
+                    android:id="@+id/pointsgiven" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/test"
+                    android:id="@+id/imageView3"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:background="#fff"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="#000"
+                    android:layout_weight="1"
+                    android:textSize="20dp"
+                    android:padding="3dip"
+                    android:text="Total Sale  " />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:textColor="#000"
+                    android:textSize="20dp"
+                    android:gravity="left"
+                    android:padding="3dip"
+                    android:text="02"
+                    android:id="@+id/totalsale" />
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/test"
+                    android:id="@+id/imageView4"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="#000"
+                    android:layout_weight="1"
+                    android:textSize="20dp"
+                    android:padding="3dip"
+                    android:text="Discount given" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:textColor="#000"
+                    android:textSize="20dp"
+                    android:gravity="left"
+                    android:padding="3dip"
+                    android:text="03"
+                    android:id="@+id/discountgiven" />
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/test"
+                    android:id="@+id/imageView5"/>
+            </LinearLayout>
         </LinearLayout>
 
      </LinearLayout>

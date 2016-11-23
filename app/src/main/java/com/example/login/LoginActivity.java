@@ -31,7 +31,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     private static final String LOGIN_CRADINTIALS = "LOGIN_CRADINTIALS";
     private static final String MY_PREFS_NAME = "";
-
     // defining views
     private Button buttonSignIn;
     private EditText editTextEmail;
@@ -41,7 +40,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     //firebase auth object
     private FirebaseAuth firebaseAuth;
     private SignInButton mGoogleLoginButton;
-    MenuInflater menuInflater;
     //progress dialog
     private ProgressDialog progressDialog;
 

@@ -73,10 +73,8 @@ public class EarnPoints extends AppCompatActivity {
                 DatabaseReference earnDatabase = clientDatabase.child(storeName);
                 DatabaseReference time = earnDatabase.child(formattedDate);
                 time.setValue(points);
-
                 calculateTotal(storeName);
-
-
+                finish();
             }
 
         });
@@ -90,8 +88,9 @@ public class EarnPoints extends AppCompatActivity {
             public void onClick(View arg0) {
 
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
-                Intent itt = new Intent(EarnPoints.this, ReportPoints.class);
-                startActivity(itt);
+                /*Intent itt = new Intent(EarnPoints.this, ReportPoints.class);
+                startActivity(itt);*/
+                finish();
             }
 
         });
@@ -141,8 +140,8 @@ public class EarnPoints extends AppCompatActivity {
 
                     Toast.makeText(getApplicationContext(), "Total Earn: " + Utility.totalEarnPoints + " Total Redeem: " + Utility.totalRedeemPoints, Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(EarnPoints.this, ReportPoints.class);
-                    startActivity(intent);
+                    /*Intent intent = new Intent(EarnPoints.this, ReportPoints.class);
+                    startActivity(intent);*/
                 }
 
                 @Override

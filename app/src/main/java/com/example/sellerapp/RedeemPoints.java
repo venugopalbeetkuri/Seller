@@ -68,8 +68,9 @@ public class RedeemPoints extends AppCompatActivity {
             public void onClick(View arg0) {
 
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
-                Intent itt = new Intent(RedeemPoints.this, ReportPoints.class);
-                startActivity(itt);
+                /*Intent itt = new Intent(RedeemPoints.this, ReportPoints.class);
+                startActivity(itt);*/
+                finish();
             }
 
         });
@@ -93,7 +94,7 @@ public class RedeemPoints extends AppCompatActivity {
                 time.setValue(points);
 
                 calculateTotal(storeName);
-
+                finish();
             }
 
         });

@@ -25,7 +25,6 @@ import java.util.Map;
 public class ReportPoints extends AppCompatActivity {
 
     TextView pointsGiven, totalsale, totaldiscount;
-    String points,sale,disco;
     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     DatabaseReference clientDatabase = database.child("client");
 

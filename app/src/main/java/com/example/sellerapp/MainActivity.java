@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     DatabaseReference clientDatabase = database.child("client");
 
-    MenuInflater menuInflater;
     private FirebaseAuth firebaseAuth;
 
     private static final int REQUEST_ENABLE_BT = 3;
@@ -92,23 +91,4 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        firebaseAuth.signOut();
-        finish();
-        /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(intent);*/
-        return super.onOptionsItemSelected(item);
-
-    }
-
-
 }

@@ -16,6 +16,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -37,6 +40,7 @@ import com.example.wifidirect.Adapter.WifiAdapter;
 import com.example.wifidirect.BroadcastReceiver.WifiDirectBroadcastReceiver;
 import com.example.wifidirect.Task.DataServerAsyncTask;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,12 +56,15 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     RecyclerView mRecyclerView;
     WifiAdapter mAdapter;
     Button btnRefresh;
+    private FirebaseAuth firebaseAuth;
+
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private BroadcastReceiver mReceiver;
     private IntentFilter mFilter;
     private WifiP2pInfo info;
+    MenuInflater menuInflater;
 
     private DataServerAsyncTask mDataTask;
 
@@ -66,6 +73,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
     // All the peers.
     private List peers = new ArrayList();
+    TextView pointsGiven, totalsale, totaldiscount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +82,19 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.wifi_direct_client);
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        Integer totalPoints = Utility.totalEarnPoints - Utility.totalRedeemPoints;
+        Integer totalBillAmount = Utility.totalBillAmount;
+        Integer totalDiscountmount = Utility.totalDiscount;
+
+        pointsGiven = (TextView) findViewById(R.id.pointsgiven);
+        totalsale = (TextView) findViewById(R.id.totalsale);
+        totaldiscount=(TextView) findViewById(R.id.discountgiven);
+
+        pointsGiven.setText(totalPoints.toString());
+        totalsale.setText(totalBillAmount.toString());
+        totaldiscount.setText(totalDiscountmount.toString());
 
         initView();
         initIntentFilter();
@@ -85,7 +106,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
     private void initView() {
 
-        txtView = (TextView) findViewById(R.id.txtReceived);
+        txtView = (TextView) findViewById(R.id.tv1);
         btnRefresh = (Button)findViewById(R.id.btnRefresh);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         mAdapter = new WifiAdapter(peersshow);
@@ -173,7 +194,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
     public void getTxtView() {
 
-        Toast.makeText(getApplicationContext(),txtView.getText().toString(),Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(),txtView.getText().toString(),Toast.LENGTH_LONG).show();
     }
 
     private void createConnect(String address, final String name) {
@@ -289,13 +310,13 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(View refresh) {
 
         Animation rotation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.buttonrotate);
         rotation.start();
-        view.startAnimation(rotation);
-
-        Utility.totalEarnPoints = 0;
+        refresh.startAnimation(rotation);
+        ResetReceiver();
+        /*Utility.totalEarnPoints = 0;
         Utility.totalRedeemPoints = 0;
 
         if(Utility.isTesting()) {
@@ -303,7 +324,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
             saveDataToFireBase();
         } else {
             ResetReceiver();
-        }
+        }*/
 
     }
 
@@ -329,6 +350,22 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        firebaseAuth.signOut();
+        finish();
+        /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);*/
+        return super.onOptionsItemSelected(item);
+
     }
 
 }
