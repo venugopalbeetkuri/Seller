@@ -20,8 +20,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.R;
-import com.example.db.EarnBO;
-import com.example.db.RedeemBO;
+
 import com.example.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;

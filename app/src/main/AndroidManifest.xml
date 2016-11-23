@@ -41,9 +41,6 @@
             android:theme="@android:style/Theme.Translucent"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".sellerapp.ReportPoints"
-            android:screenOrientation="portrait"/>
-
         <activity android:name=".login.MainActivity_login"
             android:screenOrientation="portrait"/>
 
