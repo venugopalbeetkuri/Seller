@@ -46,11 +46,10 @@ import com.google.gson.Gson;
 
 public class WifiDirectReceive extends AppCompatActivity implements View.OnClickListener {
 
-    TextView txtView;
-
-    RecyclerView mRecyclerView;
-    WifiAdapter mAdapter;
-    Button btnRefresh;
+    private TextView txtView;
+    private RecyclerView mRecyclerView;
+    private WifiAdapter mAdapter;
+    private Button btnRefresh;
     private FirebaseAuth firebaseAuth;
 
     private WifiP2pManager mManager;
@@ -58,7 +57,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     private BroadcastReceiver mReceiver;
     private IntentFilter mFilter;
     private WifiP2pInfo info;
-    MenuInflater menuInflater;
+    private MenuInflater menuInflater;
 
     private DataServerAsyncTask mDataTask;
 
@@ -67,7 +66,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
     // All the peers.
     private List peers = new ArrayList();
-    TextView pointsGiven, totalsale, totaldiscount;
+    private TextView pointsGiven, totalsale, totaldiscount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -331,10 +330,9 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         } else {
             ResetReceiver();
         }
-
     }
 
-    private void saveDataToFireBase(){
+    private void saveDataToFireBase() {
         try {
 
             Gson gson = new Gson();
@@ -360,6 +358,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu,menu);
         return super.onCreateOptionsMenu(menu);
@@ -367,6 +366,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         firebaseAuth.signOut();
         finish();
         /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
