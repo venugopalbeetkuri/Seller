@@ -58,7 +58,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     private IntentFilter mFilter;
     private WifiP2pInfo info;
     private MenuInflater menuInflater;
-
+    static boolean calledAlready = false;
     private DataServerAsyncTask mDataTask;
 
     // For peers information.
@@ -74,7 +74,12 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wifi_direct_client);
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        if (!calledAlready)
+        {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            calledAlready = true;
+        }
+
         firebaseAuth = FirebaseAuth.getInstance();
 
         Utility.calculateTotal("venu-xyz");
@@ -354,6 +359,11 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
