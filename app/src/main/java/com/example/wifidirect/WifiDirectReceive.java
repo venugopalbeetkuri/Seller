@@ -395,6 +395,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
                 // Append file and send Intent
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
                 startActivity(Intent.createChooser(intent, "Share app"));
+                Toast.makeText(getApplicationContext(),"Share the Seller App...",Toast.LENGTH_LONG).show();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

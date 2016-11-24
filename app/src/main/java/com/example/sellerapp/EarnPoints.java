@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 
-public class EarnPoints extends Activity {
+public class EarnPoints extends AppCompatActivity {
 
     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     DatabaseReference storeDatabase = database.child("store");
