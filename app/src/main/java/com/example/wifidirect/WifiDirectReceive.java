@@ -3,6 +3,8 @@ package com.example.wifidirect;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.net.Uri;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -26,6 +28,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -377,12 +380,32 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        firebaseAuth.signOut();
-        finish();
+        if(item.getItemId()==R.id.share)
+        {
+            try {
+
+                ApplicationInfo app = getApplicationContext().getApplicationInfo();
+                String filePath = app.sourceDir;
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("*/*");
+
+                // Only use Bluetooth to send .apk
+                // intent.setPackage("com.android.bluetooth");
+
+                // Append file and send Intent
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
+                startActivity(Intent.createChooser(intent, "Share app"));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return super.onOptionsItemSelected(item);
+        }else {
+            firebaseAuth.signOut();
+            finish();
         /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);*/
-        return super.onOptionsItemSelected(item);
-
+            return super.onOptionsItemSelected(item);
+        }
     }
 
 }
