@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "893489102034",
+    "firebase_url": "https://sellerapp-9bd76.firebaseio.com",
+    "project_id": "sellerapp-9bd76",
+    "storage_bucket": "sellerapp-9bd76.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893489102034:android:0c3904977708eed7",
+        "android_client_info": {
+          "package_name": "com.example.provigil.sellerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "893489102034-r072j4kv65bf1ss4smek6reo34ssrja1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.provigil.sellerapp",
+            "certificate_hash": "02676E948B01160808A27890FBA79FBF67E7F3C4"
+          }
+        },
+        {
+          "client_id": "893489102034-43q74oh3fvhvcfpqo5n3jpk4ovdcsn6s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAafsQLq0j6Foj1jnqpao3hFGby9oqI3B8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893489102034-43q74oh3fvhvcfpqo5n3jpk4ovdcsn6s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
