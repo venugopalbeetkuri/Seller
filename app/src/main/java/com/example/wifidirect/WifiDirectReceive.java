@@ -405,11 +405,6 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
                 String filePath = app.sourceDir;
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("*/*");
-
-                // Only use Bluetooth to send .apk
-                // intent.setPackage("com.android.bluetooth");
-
-                // Append file and send Intent
                 intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
                 startActivity(Intent.createChooser(intent, "Share app"));
                 Toast.makeText(getApplicationContext(),"Share the Seller App...",Toast.LENGTH_LONG).show();
@@ -420,8 +415,6 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         }else {
             firebaseAuth.signOut();
             finish();
-        /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(intent);*/
             return super.onOptionsItemSelected(item);
         }
     }

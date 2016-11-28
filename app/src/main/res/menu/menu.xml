@@ -5,12 +5,12 @@
     <item
         android:title="share"
         android:id="@+id/share"
-        android:icon="@drawable/share"
+        android:icon="@android:drawable/ic_menu_share"
         app:showAsAction="always"/>
     <item
         android:title="Logout"
         android:id="@+id/logout_menu"
-        android:icon="@drawable/logout"
+        android:icon="@android:drawable/ic_lock_power_off"
         app:showAsAction="always"
         />
 </menu>

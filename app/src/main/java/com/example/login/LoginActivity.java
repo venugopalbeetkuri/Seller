@@ -1,9 +1,12 @@
 package com.example.login;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
@@ -13,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -37,6 +41,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private EditText editTextPassword;
     private TextView textViewSignup;
 
+    private TextView policy,terms;
     //firebase auth object
     private FirebaseAuth firebaseAuth;
     private SignInButton mGoogleLoginButton;
@@ -66,7 +71,35 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         buttonSignIn = (Button) findViewById(R.id.buttonSignin);
         textViewSignup = (TextView) findViewById(R.id.textViewSignUp);
+        policy =(TextView)findViewById(R.id.policy);
+        terms = (TextView) findViewById(R.id.terms);
 
+        terms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Dialog custom = new Dialog(LoginActivity.this);
+                custom.setTitle("CUSTOM DIALOG");
+                custom.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                //custom.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                custom.setContentView(R.layout.terms);
+                //custom.setCancelable(false);
+                custom.setCanceledOnTouchOutside(false);
+                custom.show();
+            }
+        });
+        policy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Dialog custom = new Dialog(LoginActivity.this);
+                custom.setTitle("CUSTOM DIALOG");
+                custom.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                //custom.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                custom.setContentView(R.layout.policy);
+                //custom.setCancelable(false);
+                custom.setCanceledOnTouchOutside(false);
+                custom.show();
+            }
+        });
         progressDialog = new ProgressDialog(this);
 
         //attaching click listener
