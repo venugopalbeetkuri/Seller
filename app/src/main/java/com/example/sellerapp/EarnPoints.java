@@ -1,6 +1,5 @@
 package com.example.sellerapp;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +8,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import com.example.R;
+import com.example.db.AcknowledgePoints;
 import com.example.db.PointsBO;
 import com.example.db.StoreBO;
 import com.example.login.LoginActivity;
@@ -39,6 +39,9 @@ public class EarnPoints extends AppCompatActivity {
     Calendar c = Calendar.getInstance();
     SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
+    String earnString = null;
+
+
     PointsBO points = null;
 
     @Override
@@ -48,7 +51,7 @@ public class EarnPoints extends AppCompatActivity {
         setContentView(R.layout.activity_earn);
 
         Intent intent = getIntent();
-        String earnString = intent.getStringExtra("earnRedeemString");
+        earnString = intent.getStringExtra("earnRedeemString");
 
         Gson gson = new Gson();
         points = gson.fromJson(earnString, PointsBO.class);
@@ -65,6 +68,7 @@ public class EarnPoints extends AppCompatActivity {
 
         addListenerOnAcceptButton();
         addListenerOnCancelButton();
+
     }
 
     private void updateStoreName(final String storeName){
@@ -74,8 +78,7 @@ public class EarnPoints extends AppCompatActivity {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             final String storeEmail = firebaseAuth.getCurrentUser().getEmail();
 
-            // if the objects getcurrentuser method is not null
-            //means user is already logged in
+            // If the objects getcurrentuser method is not null means user is already logged in.
             if (firebaseAuth.getCurrentUser() != null) {
 
                 Query query  = database.child("store");
@@ -89,14 +92,12 @@ public class EarnPoints extends AppCompatActivity {
                         boolean found = false;
                         for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
 
-
                             HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
 
                             String storeNameDB = timeStampKey.get("storeName");
                             if (storeNameDB.equalsIgnoreCase(storeName)) {
                                 found = true;
                             }
-
                         }
 
                         if(!found) {
@@ -116,7 +117,8 @@ public class EarnPoints extends AppCompatActivity {
 
                 //close this activity
                 finish();
-                //opening profile activity
+
+                // opening profile activity
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             }
 
@@ -141,6 +143,7 @@ public class EarnPoints extends AppCompatActivity {
                 DatabaseReference time = earnDatabase.child(formattedDate);
                 time.setValue(points);
                 Utility.calculateTotal(storeName);
+                sendAcknowledgement(true);
                 finish();
             }
 
@@ -157,10 +160,34 @@ public class EarnPoints extends AppCompatActivity {
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
                 /*Intent itt = new Intent(EarnPoints.this, ReportPoints.class);
                 startActivity(itt);*/
+                sendAcknowledgement(false);
                 finish();
             }
 
         });
+    }
+
+    String jsonACK = null;
+
+    private void sendAcknowledgement(boolean success) {
+
+        AcknowledgePoints ack = null;
+
+        if(success) {
+
+            ack = new AcknowledgePoints("success", earnString);
+        } else {
+
+            ack = new AcknowledgePoints("failure", earnString);
+        }
+
+        Gson gson = Utility.getGsonObject();
+        jsonACK = gson.toJson(ack);
+
+
+        Intent intent = new Intent(this, WifiDirectReceive.class);
+        intent.putExtra("jsonACK", jsonACK);
+        startActivity(intent);
     }
 
 }

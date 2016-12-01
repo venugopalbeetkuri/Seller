@@ -7,6 +7,7 @@ import android.widget.TextView;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import com.example.db.PointsBO;
@@ -19,7 +20,9 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
 
     private WifiDirectReceive activity;
 
-    public DataServerAsyncTask(WifiDirectReceive activity, TextView txtView) {
+    String remoteAddress = null;
+
+    public DataServerAsyncTask(WifiDirectReceive activity) {
 
         this.activity = activity;
     }
@@ -35,6 +38,9 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
              Log.i("bizzmark", "Opening socket on 8888.");
              Socket client = serverSocket.accept();
 
+             remoteAddress =  ((InetSocketAddress)client.getRemoteSocketAddress()).getAddress().getHostName();
+                     // client.getRemoteSocketAddress().toString();
+
              Log.i("bizzmark", "Client connected.");
              InputStream inputstream = client.getInputStream();
              ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -45,14 +51,14 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
 
              String str = baos.toString();
 
-            try {
+            /*try {
 
                 OutputStream outputStream = client.getOutputStream();
                 outputStream.write("Success\r\n".getBytes());
             }
             catch (Throwable th){
                 th.printStackTrace();
-            }
+            }*/
 
             serverSocket.close();
 
@@ -85,11 +91,13 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
 
                     Intent intent = new Intent(activity,EarnPoints.class);
                     intent.putExtra("earnRedeemString", result);
+                    intent.putExtra("remoteAddress", remoteAddress);
                     activity.startActivity(intent);
                 }else if (type.equalsIgnoreCase("Redeem")){
 
                     Intent intent = new Intent(activity,RedeemPoints.class);
                     intent.putExtra("earnRedeemString", result);
+                    intent.putExtra("remoteAddress", remoteAddress);
                     activity.startActivity(intent);
                 }
             } catch (Exception e) {

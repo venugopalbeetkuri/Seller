@@ -1,11 +1,14 @@
 package com.example.wifidirect;
 
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -31,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,6 +47,7 @@ import com.example.sellerapp.RedeemPoints;
 import com.example.util.Utility;
 import com.example.wifidirect.Adapter.WifiAdapter;
 import com.example.wifidirect.BroadcastReceiver.WifiDirectBroadcastReceiver;
+import com.example.wifidirect.Service.DataTransferService;
 import com.example.wifidirect.Task.DataServerAsyncTask;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -73,16 +78,29 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     private List peers = new ArrayList();
     private TextView pointsGiven, totalsale, totaldiscount;
 
+    boolean sendAck = false;
+    String jsonACK = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wifi_direct_client);
 
-        if (!calledAlready)
-        {
+        info = null;
+
+        if (!calledAlready) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             calledAlready = true;
+        }
+
+        Intent intent = getIntent();
+        if(null != intent.getExtras()) {
+
+            jsonACK = intent.getExtras().getString("jsonACK");
+            sendAck = true;
+        } else {
+            sendAck = false;
         }
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -97,6 +115,14 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         initEvents();
         getTxtView();
         discoverPeers();
+
+        if(null == mDataTask) {
+            mDataTask = new DataServerAsyncTask(WifiDirectReceive.this);
+            mDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+
+
+
     }
 
     private void updatePoints() {
@@ -170,19 +196,22 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
                 mRecyclerView.setAdapter(mAdapter);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(WifiDirectReceive.this));
 
-                mAdapter.SetOnItemClickListener(new WifiAdapter.OnItemClickListener() {
+                if(sendAck) {
 
-                    @Override
-                    public void OnItemClick(View view, int position) {
+                    mAdapter.SetOnItemClickListener(new WifiAdapter.OnItemClickListener() {
 
-                        createConnect(peersshow.get(position).get("address"), peersshow.get(position).get("name"));
-                    }
+                        @Override
+                        public void OnItemClick(View view, int position) {
+                            createConnect(peersshow.get(position).get("address"), peersshow.get(position).get("name"));
+                        }
 
-                    @Override
-                    public void OnItemLongClick(View view, int position) {
+                        @Override
+                        public void OnItemLongClick(View view, int position) {
 
-                    }
-                });
+                        }
+                    });
+                }
+
             }
         };
 
@@ -195,15 +224,6 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
                 Toast.makeText(getApplicationContext(),"ConnectionInfoListener onConnectionInfoAvailable.",Toast.LENGTH_SHORT).show();
 
                 info = minfo;
-
-                if (info.groupFormed && info.isGroupOwner) {
-
-                    Toast.makeText(getApplicationContext(),"WifiP2pManager.ConnectionInfoListener onConnectionInfoAvailable: Group owner.",Toast.LENGTH_SHORT).show();
-                    Log.i("bizzmark", "Receive server start.");
-
-                    mDataTask = new DataServerAsyncTask(WifiDirectReceive.this,txtView);
-                    mDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
             }
         };
 
@@ -215,34 +235,81 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         //Toast.makeText(getApplicationContext(),txtView.getText().toString(),Toast.LENGTH_LONG).show();
     }
 
-    private void createConnect(String address, final String name) {
+    /*A demo base on API which you can connect android device by wifidirect,
+    and you can send file or data by socket,what is the most important is that you can set
+    which device is the client or service.*/
 
-        //WifiP2pDevice device;
-        WifiP2pConfig config = new WifiP2pConfig();
-        Log.i("bizzmark", address);
+    private void createConnect(String address, String name) {
 
-        config.deviceAddress = address;
-
-        config.wps.setup = WpsInfo.PBC;
-        Log.i("bizzmark", "MAC IS " + address);
-
-        // Seller app so group owner.
-        config.groupOwnerIntent = 15;
+        WifiP2pConfig config = initWifiP2pConfig(address);
 
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
 
             @Override
             public void onSuccess() {
 
-                Toast.makeText(getApplicationContext(),"WifiP2pManager.connect success.",Toast.LENGTH_SHORT).show();
+                sendAck();
             }
 
             @Override
             public void onFailure(int reason) {
 
-                Toast.makeText(getApplicationContext(),"WifiP2pManager.connect failure reason: " + reason,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"WifiP2pManager connect failure. Reason: " + reason, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * Initialize P2PConfiguration.
+     */
+    private WifiP2pConfig initWifiP2pConfig(String address) {
+
+        WifiP2pConfig config = null;
+
+        try {
+            // WifiP2pDevice device;
+            config = new WifiP2pConfig();
+            Log.i("bizzmark", address);
+
+            config.deviceAddress = address;
+
+            config.wps.setup = WpsInfo.PBC;
+
+            // Acknowledgement so not group owner.
+            config.groupOwnerIntent = 0;
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+
+        return config;
+    }
+
+    private void sendAck() {
+
+        try {
+
+            if(null == info){
+               return;
+            }
+
+            // Send msg to seller.
+            Intent serviceIntent = new Intent(this, DataTransferService.class);
+            serviceIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS, info.groupOwnerAddress.getHostAddress());
+
+
+            serviceIntent.putExtra(DataTransferService.MESSAGE, jsonACK);
+
+
+            Log.i("bizzmark", "owenerip is " + info.groupOwnerAddress.getHostAddress());
+            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 9999);
+
+            // Start service.
+            startService(serviceIntent);
+
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
     }
 
     private void initEvents() {
@@ -250,20 +317,6 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         btnRefresh.setOnClickListener(this);
 
         discoverPeers();
-
-        mAdapter.SetOnItemClickListener(new WifiAdapter.OnItemClickListener() {
-
-            @Override
-            public void OnItemClick(View view, int position) {
-
-                createConnect(peersshow.get(position).get("address"), peersshow.get(position).get("name"));
-            }
-
-            @Override
-            public void OnItemLongClick(View view, int position) {
-
-            }
-        });
     }
 
     private void discoverPeers() {
@@ -272,12 +325,20 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onSuccess() {
-                Toast.makeText(getApplicationContext(),"WifiP2pManager.discoverPeers success.",Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getApplicationContext(),"WifiP2pManager.discoverPeers success.",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(int reason) {
-                Toast.makeText(getApplicationContext(),"WifiP2pManager.discoverPeers failure. Reason: " + reason,Toast.LENGTH_SHORT).show();
+
+                // Wifi disabled, Enable.
+                if(2 == reason) {
+
+                    // Toast.makeText(getApplicationContext(),"Enabling wifi.", Toast.LENGTH_SHORT).show();
+                    WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                    wifiManager.setWifiEnabled(true);
+                }
+                Toast.makeText(getApplicationContext(),"WifiP2pManager discoverPeers failure. Reason: " + reason, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -323,8 +384,26 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     public void ResetReceiver() {
 
         unregisterReceiver(mReceiver);
-        registerReceiver(mReceiver, mFilter);
 
+        // deletePersistentGroups();
+        registerReceiver(mReceiver, mFilter);
+    }
+
+    private void deletePersistentGroups(){
+        //WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        try {
+            Method[] methods = WifiP2pManager.class.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals("deletePersistentGroup")) {
+                    // Delete any persistent group
+                    for (int netid = 0; netid < 32; netid++) {
+                        methods[i].invoke(mManager, mChannel, netid, null);
+                    }
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -338,7 +417,16 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
             saveDataToFireBase();
         } else {
-            ResetReceiver();
+
+            // New code Start.
+            /*peers.clear();
+            peersshow.clear();
+            mAdapter = new WifiAdapter(peersshow);
+            mRecyclerView.setAdapter(mAdapter);*/
+            // New code End.
+
+           ResetReceiver();
+            // discoverPeers();
         }
     }
 
