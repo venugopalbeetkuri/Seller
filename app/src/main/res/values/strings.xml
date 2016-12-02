@@ -3,7 +3,7 @@
     <string name="title_activity_report">Report</string>
     <string name="policy"><u>Privacy Policy</u> and </string>
     <string name="terms"><u>Terms &amp; Conditions</u></string>
-
+    <string name="spinner_title">Select</string>
     <string name="termsContents">
     <b>The Terms and Conditions</b>
 \n\n("Terms") explain the nature and scope of the relationship between smartpoints {owned by Bizzmark }  herein referred to as "smartpoints" or "We" (as owner and management for the program) and you, for downloading, accessing or using the mobile applications, websites or other products and services of Bizzmark .
@@ -83,8 +83,7 @@ eachsmartpoint  is equivalent to INR1; in case any product or service selected b
 \n 11. We will not be responsible for the consequences ofsmartpoints Merchant on accepting wrong, and incorrect bill amount by the smartpointsmember.As the smartpoints Merchant has two verification steps that he accepts before granting any smartpoints to the smartpoints member.
 </string>
 
-    <string name="policyContents">"
-\n<b>PRIVACY POLICY FOR MERCHANTS</b>
+    <string name="policyContents">"\n<b>PRIVACY POLICY FOR MERCHANTS</b>
 \n\n As a smartpoints Merchant, you agree to post a privacy policy on your storefront that complies with the laws applicable to your business. You also agree to obtain consent from your customers for the use and access of their Personal Information
 \n\n What information do we collect from Merchants and why
 \n\n1. We collect your name, company name, address, email address, phone number(s) .

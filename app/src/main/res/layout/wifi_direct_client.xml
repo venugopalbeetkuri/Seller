@@ -25,8 +25,17 @@
             android:gravity="end"
             android:orientation="horizontal">
 
+                <Button
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/report"
+                    android:id="@+id/report"
+                    android:gravity="center"
+                    android:layout_weight="0"
+                    android:layout_gravity="top"/>
                 <TextView
                     android:id="@+id/tv1"
+                    android:layout_weight="10"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -37,6 +46,7 @@
                 <Button
                         android:layout_width="60dp"
                         android:layout_height="60dp"
+                        android:layout_weight="0"
                         android:layout_gravity="top"
                         android:background="@drawable/refresh_black"
                         android:id="@+id/btnRefresh" />

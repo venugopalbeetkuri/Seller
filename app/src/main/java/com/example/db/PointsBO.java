@@ -1,5 +1,8 @@
 package com.example.db;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 /**
  * Created by Chalam on 11/18/2016.
  */
@@ -12,13 +15,15 @@ public class PointsBO {
     String points;
     String deviceId;
     String disCountAmount;
-
+    String time;
 
     public PointsBO(String type,
             String billAmount,
             String storeName,
             String points,
-            String deviceId, String disCountAmount){
+            String deviceId,
+            String disCountAmount,
+            String time){
 
         this.type = type;
         this.billAmount =billAmount;
@@ -26,6 +31,11 @@ public class PointsBO {
         this.points = points;
         this.deviceId = deviceId;
         this.disCountAmount = disCountAmount;
+
+        //SimpleDateFormat acceptdate = new SimpleDateFormat("ddMMyyyy");
+        //String accept = acceptdate.format(time);
+
+        this.time = time;
     }
 
 
@@ -76,4 +86,8 @@ public class PointsBO {
     public void setDisCountAmount(String disCountAmount) {
         this.disCountAmount = disCountAmount;
     }
+
+    public String getTime(){return time;}
+
+    public void setTime(String time) { this.time = time;}
 }

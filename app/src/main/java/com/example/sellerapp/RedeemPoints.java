@@ -32,6 +32,7 @@ public class RedeemPoints extends AppCompatActivity {
 
     Calendar c = Calendar.getInstance();
     SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    //SimpleDateFormat acceptdate = new SimpleDateFormat("dd/MM/yyy");
     final static String log = "Seller app";
     PointsBO points = null;
     String redeemString = null;
@@ -92,10 +93,14 @@ public class RedeemPoints extends AppCompatActivity {
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
 
                 String formattedDate = df.format(c.getTime());
+                //String accept = acceptdate.format(c.getTime());
+
                 String storeName = points.getStoreName();
+
                 DatabaseReference pointsDB = clientDatabase.child(storeName);
                 DatabaseReference time = pointsDB.child(formattedDate);
                 time.setValue(points);
+                //time.setValue(accept);
 
                 Utility.calculateTotal(storeName);
                 sendAcknowledgement(true);

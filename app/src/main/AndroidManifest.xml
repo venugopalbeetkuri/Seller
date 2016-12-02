@@ -39,6 +39,9 @@
         <activity android:name=".sellerapp.EarnPoints"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".sellerapp.ReportActivity"
+            android:screenOrientation="portrait" />
+
         <activity android:name=".sellerapp.MainActivity"
             android:screenOrientation="portrait" />
 

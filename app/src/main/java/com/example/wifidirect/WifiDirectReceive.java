@@ -44,6 +44,7 @@ import com.example.R;
 import com.example.db.PointsBO;
 import com.example.sellerapp.EarnPoints;
 import com.example.sellerapp.RedeemPoints;
+import com.example.sellerapp.ReportActivity;
 import com.example.util.Utility;
 import com.example.wifidirect.Adapter.WifiAdapter;
 import com.example.wifidirect.BroadcastReceiver.WifiDirectBroadcastReceiver;
@@ -61,7 +62,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     private WifiAdapter mAdapter;
     private Button btnRefresh;
     private FirebaseAuth firebaseAuth;
-
+    private Button report;
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private BroadcastReceiver mReceiver;
@@ -105,7 +106,11 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        Utility.calculateTotal("venu-xyz");
+       //String storeName = getStoreName();
+
+
+        Utility.calculateTotal("xyz");
+        report = (Button) findViewById(R.id.report);
 
         updatePoints();
 
@@ -156,6 +161,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         mAdapter = new WifiAdapter(peersshow);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
+
     }
 
     private void initIntentFilter() {
@@ -214,6 +220,18 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
             }
         };
+
+
+        report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(),ReportActivity.class);
+
+                startActivity(intent);
+
+            }
+        });
 
         WifiP2pManager.ConnectionInfoListener mInfoListener = new WifiP2pManager.ConnectionInfoListener() {
 
@@ -434,7 +452,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         try {
 
             Gson gson = new Gson();
-            PointsBO points = new PointsBO("Earn", "2000", "venu-xyz", "200", "xyz", "0");
+            PointsBO points = new PointsBO("Earn", "2000", "venu-xyz", "200", "xyz", "0","16112016");
             String result = gson.toJson(points);
 
             Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
