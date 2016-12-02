@@ -9,7 +9,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
-
 import com.example.R;
 import com.example.db.AcknowledgePoints;
 import com.example.db.PointsBO;
@@ -78,14 +77,10 @@ public class RedeemPoints extends AppCompatActivity {
             public void onClick(View arg0) {
 
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
-                /*Intent itt = new Intent(RedeemPoints.this, ReportPoints.class);
-                startActivity(itt);*/
                 sendAcknowledgement(false);
                 finish();
             }
-
         });
-
     }
 
     public void addListenerOnAcceptButton() {
@@ -98,19 +93,11 @@ public class RedeemPoints extends AppCompatActivity {
             public void onClick(View arg0) {
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
 
-                String formattedDate = df.format(c.getTime());
-                //String accept = acceptdate.format(c.getTime());
-
-                String storeName = points.getStoreName();
-
-                DatabaseReference pointsDB = clientDatabase.child(storeName);
-                DatabaseReference time = pointsDB.child(formattedDate);
-                time.setValue(points);
-                //time.setValue(accept);
-
-                Utility.calculateTotal(storeName);
+                // Send acknowledgement to customer.
                 sendAcknowledgement(true);
 
+                // Save to database.
+                saveToDataBase();
                 finish();
             }
 
@@ -133,6 +120,7 @@ public class RedeemPoints extends AppCompatActivity {
         jsonACK = gson.toJson(ack);
         sendMessage();
 
+        // After sending acknowledgement move to first screen.
         Intent itt = new Intent(this, WifiDirectReceive.class);
         startActivity(itt);
     }
@@ -160,6 +148,22 @@ public class RedeemPoints extends AppCompatActivity {
             // Start service.
             startService(serviceIntent);
 
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+    }
+
+    private void saveToDataBase() {
+
+        try {
+
+            String formattedDate = df.format(c.getTime());
+            String storeName = points.getStoreName();
+
+            DatabaseReference earnDatabase = clientDatabase.child(storeName);
+            DatabaseReference time = earnDatabase.child(formattedDate);
+            time.setValue(points);
+            Utility.calculateTotal(storeName);
         } catch (Throwable th) {
             th.printStackTrace();
         }

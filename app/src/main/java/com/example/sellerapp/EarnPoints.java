@@ -141,14 +141,11 @@ public class EarnPoints extends AppCompatActivity {
             public void onClick(View arg0) {
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
 
-                String formattedDate = df.format(c.getTime());
-                String storeName = points.getStoreName();
-
-                DatabaseReference earnDatabase = clientDatabase.child(storeName);
-                DatabaseReference time = earnDatabase.child(formattedDate);
-                time.setValue(points);
-                Utility.calculateTotal(storeName);
+                // Send acknowledgement to client.
                 sendAcknowledgement(true);
+
+                // Save to database.
+                saveToDataBase();
                 finish();
             }
 
@@ -163,8 +160,8 @@ public class EarnPoints extends AppCompatActivity {
             public void onClick(View arg0) {
 
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
-                /*Intent itt = new Intent(EarnPoints.this, ReportPoints.class);
-                startActivity(itt);*/
+
+                // Send acknowledgement to client.
                 sendAcknowledgement(false);
                 finish();
             }
@@ -221,5 +218,22 @@ public class EarnPoints extends AppCompatActivity {
             th.printStackTrace();
         }
     }
+
+    private void saveToDataBase() {
+
+        try {
+
+            String formattedDate = df.format(c.getTime());
+            String storeName = points.getStoreName();
+
+            DatabaseReference earnDatabase = clientDatabase.child(storeName);
+            DatabaseReference time = earnDatabase.child(formattedDate);
+            time.setValue(points);
+            Utility.calculateTotal(storeName);
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+    }
+
 
 }
