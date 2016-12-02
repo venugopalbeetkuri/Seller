@@ -33,6 +33,24 @@ public class DataTransferService extends IntentService {
         super("DataTransferService");
     }
 
+    private static DataTransferService instance = null;
+
+    public static boolean isInstanceCreated() {
+        return instance != null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        instance = this;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        instance = null;
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -73,13 +91,17 @@ public class DataTransferService extends IntentService {
             } finally {
 
                 try{
-                    outputStream.close();
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }
 
                 try{
-                    inputStream.close();
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }

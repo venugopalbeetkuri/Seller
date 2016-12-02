@@ -3,6 +3,7 @@ package com.example.sellerapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import com.example.db.PointsBO;
 import com.example.db.StoreBO;
 import com.example.login.LoginActivity;
 import com.example.util.Utility;
+import com.example.wifidirect.Service.DataTransferService;
 import com.example.wifidirect.WifiDirectReceive;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -40,6 +42,7 @@ public class EarnPoints extends AppCompatActivity {
     SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
     String earnString = null;
+    String remoteMacAddress = null;
 
 
     PointsBO points = null;
@@ -52,6 +55,8 @@ public class EarnPoints extends AppCompatActivity {
 
         Intent intent = getIntent();
         earnString = intent.getStringExtra("earnRedeemString");
+
+        remoteMacAddress = intent.getStringExtra("remoteAddress");
 
         Gson gson = new Gson();
         points = gson.fromJson(earnString, PointsBO.class);
@@ -183,11 +188,50 @@ public class EarnPoints extends AppCompatActivity {
 
         Gson gson = Utility.getGsonObject();
         jsonACK = gson.toJson(ack);
+        sendMessage();
 
 
-        Intent intent = new Intent(this, WifiDirectReceive.class);
+        /*Intent intent = new Intent(this, WifiDirectReceive.class);
         intent.putExtra("jsonACK", jsonACK);
-        startActivity(intent);
+        startActivity(intent);*/
+    }
+
+    Intent serviceIntent = null;
+
+    private void sendMessage() {
+
+        try {
+
+            /*if (null == info) {
+                return;
+            }*/
+
+
+            boolean instance = DataTransferService.isInstanceCreated();
+            if(!instance) {
+                serviceIntent = new Intent(this, DataTransferService.class);
+            }
+
+            // Send msg to seller.
+            // Intent serviceIntent = new Intent(WifiDirectSend.this, DataTransferService.class);
+            serviceIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS, remoteMacAddress);
+
+            serviceIntent.putExtra(DataTransferService.MESSAGE, jsonACK);
+
+            Log.i("bizzmark", "Customer Address: " + remoteMacAddress);
+            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 9999);
+
+            // Start service.
+            startService(serviceIntent);
+
+            // Move to Points report.
+           /* Intent i = new Intent(WifiDirectSend.this, PointListActivity.class);
+            startActivity(i);*/
+
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
     }
 
 }

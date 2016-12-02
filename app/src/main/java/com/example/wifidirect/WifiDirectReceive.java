@@ -100,6 +100,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
             jsonACK = intent.getExtras().getString("jsonACK");
             sendAck = true;
+            info = null;
         } else {
             sendAck = false;
         }
@@ -202,13 +203,18 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
                 mRecyclerView.setAdapter(mAdapter);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(WifiDirectReceive.this));
 
+                if (null == info) {
+                    return;
+                }
+
                 if(sendAck) {
 
                     mAdapter.SetOnItemClickListener(new WifiAdapter.OnItemClickListener() {
 
                         @Override
                         public void OnItemClick(View view, int position) {
-                            createConnect(peersshow.get(position).get("address"), peersshow.get(position).get("name"));
+                            // createConnect(peersshow.get(position).get("address"), peersshow.get(position).get("name"));
+                            createConnect(peersshow.get(position).get("address"));
                         }
 
                         @Override
@@ -239,7 +245,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
             public void onConnectionInfoAvailable(WifiP2pInfo minfo) {
 
                 Log.i("bizzmark", "InfoAvailable is on");
-                Toast.makeText(getApplicationContext(),"ConnectionInfoListener onConnectionInfoAvailable.",Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getApplicationContext(),"ConnectionInfoListener onConnectionInfoAvailable.",Toast.LENGTH_SHORT).show();
 
                 info = minfo;
             }
@@ -257,7 +263,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     and you can send file or data by socket,what is the most important is that you can set
     which device is the client or service.*/
 
-    private void createConnect(String address, String name) {
+    private void createConnect(String address) {
 
         WifiP2pConfig config = initWifiP2pConfig(address);
 
@@ -306,7 +312,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
         try {
 
-            if(null == info){
+            if(null == info) {
                return;
             }
 
@@ -315,9 +321,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
             serviceIntent.setAction(DataTransferService.ACTION_SEND_DATA);
             serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS, info.groupOwnerAddress.getHostAddress());
 
-
             serviceIntent.putExtra(DataTransferService.MESSAGE, jsonACK);
-
 
             Log.i("bizzmark", "owenerip is " + info.groupOwnerAddress.getHostAddress());
             serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 9999);
@@ -431,28 +435,28 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         rotation.start();
         refresh.startAnimation(rotation);
 
-        if(Utility.isTesting()) {
+        /*if(Utility.isTesting()) {
 
             saveDataToFireBase();
-        } else {
+        } else {*/
 
-            // New code Start.
-            /*peers.clear();
-            peersshow.clear();
-            mAdapter = new WifiAdapter(peersshow);
-            mRecyclerView.setAdapter(mAdapter);*/
-            // New code End.
+        // New code Start.
+        peers.clear();
+        peersshow.clear();
+        mAdapter = new WifiAdapter(peersshow);
+        mRecyclerView.setAdapter(mAdapter);
 
-           ResetReceiver();
-            // discoverPeers();
-        }
+        // ResetReceiver();
+        discoverPeers();
+        info = null;
+        //}
     }
 
     private void saveDataToFireBase() {
         try {
 
             Gson gson = new Gson();
-            PointsBO points = new PointsBO("Earn", "2000", "venu-xyz", "200", "xyz", "0","16112016");
+            PointsBO points = new PointsBO("Earn", "2000", "venu-xyz", "200", "xyz", "0", "macId");
             String result = gson.toJson(points);
 
             Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
@@ -503,25 +507,35 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(item.getItemId()==R.id.share)
-        {
-            try {
+        if(item.getItemId()==R.id.share) {
 
-                ApplicationInfo app = getApplicationContext().getApplicationInfo();
-                String filePath = app.sourceDir;
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("*/*");
-                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
-                startActivity(Intent.createChooser(intent, "Share app"));
-                Toast.makeText(getApplicationContext(),"Share the Seller App...",Toast.LENGTH_LONG).show();
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            if(Utility.isTesting()) {
+                deletePersistentGroups();
+            } else {
+                shareButtonFunctionality();
             }
             return super.onOptionsItemSelected(item);
-        }else {
+        } else {
+
             firebaseAuth.signOut();
             finish();
             return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    private void shareButtonFunctionality(){
+        try {
+
+            ApplicationInfo app = getApplicationContext().getApplicationInfo();
+            String filePath = app.sourceDir;
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("*/*");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
+            startActivity(Intent.createChooser(intent, "Share app"));
+            Toast.makeText(getApplicationContext(),"Share the Seller App...",Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

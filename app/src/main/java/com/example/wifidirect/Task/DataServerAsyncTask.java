@@ -86,6 +86,8 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
                 Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
                 String type = points.getType().toString();
 
+                // remoteAddress = points.getMacAddress();
+
                 //saveToFireBase(points);
                 if(type.equalsIgnoreCase("Earn")){
 
