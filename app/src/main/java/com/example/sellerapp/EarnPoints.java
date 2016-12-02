@@ -190,10 +190,8 @@ public class EarnPoints extends AppCompatActivity {
         jsonACK = gson.toJson(ack);
         sendMessage();
 
-
-        /*Intent intent = new Intent(this, WifiDirectReceive.class);
-        intent.putExtra("jsonACK", jsonACK);
-        startActivity(intent);*/
+        Intent itt = new Intent(this, WifiDirectReceive.class);
+        startActivity(itt);
     }
 
     Intent serviceIntent = null;
@@ -202,18 +200,12 @@ public class EarnPoints extends AppCompatActivity {
 
         try {
 
-            /*if (null == info) {
-                return;
-            }*/
-
-
             boolean instance = DataTransferService.isInstanceCreated();
             if(!instance) {
                 serviceIntent = new Intent(this, DataTransferService.class);
             }
 
             // Send msg to seller.
-            // Intent serviceIntent = new Intent(WifiDirectSend.this, DataTransferService.class);
             serviceIntent.setAction(DataTransferService.ACTION_SEND_DATA);
             serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS, remoteMacAddress);
 
@@ -224,10 +216,6 @@ public class EarnPoints extends AppCompatActivity {
 
             // Start service.
             startService(serviceIntent);
-
-            // Move to Points report.
-           /* Intent i = new Intent(WifiDirectSend.this, PointListActivity.class);
-            startActivity(i);*/
 
         } catch (Throwable th) {
             th.printStackTrace();

@@ -19,7 +19,7 @@ import java.net.Socket;
  */
 public class DataTransferService extends IntentService {
 
-    private static final int SOCKET_TIMEOUT = 60000;
+    private static final int SOCKET_TIMEOUT = 5000;
     public static final String ACTION_SEND_DATA = "SEND_DATA";
     public static final String EXTRAS_GROUP_OWNER_ADDRESS = "host";
     public static final String EXTRAS_GROUP_OWNER_PORT = "port";

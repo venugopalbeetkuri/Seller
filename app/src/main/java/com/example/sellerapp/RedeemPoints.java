@@ -16,6 +16,7 @@ import com.example.db.PointsBO;
 import com.example.util.Utility;
 
 import com.example.wifidirect.Service.DataTransferService;
+import com.example.wifidirect.WifiDirectReceive;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -37,6 +38,9 @@ public class RedeemPoints extends AppCompatActivity {
     PointsBO points = null;
     String redeemString = null;
 
+    String jsonACK = null;
+    String remoteMacAddress = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class RedeemPoints extends AppCompatActivity {
 
         Intent intent = getIntent();
         redeemString = intent.getStringExtra("earnRedeemString");
+
+        remoteMacAddress = intent.getStringExtra("remoteAddress");
 
         Gson gson = new Gson();
         points = gson.fromJson(redeemString, PointsBO.class);
@@ -124,24 +130,39 @@ public class RedeemPoints extends AppCompatActivity {
         }
 
         Gson gson = Utility.getGsonObject();
-        String jsonACK = gson.toJson(ack);
+        jsonACK = gson.toJson(ack);
+        sendMessage();
 
-        String hostAddress = null;
+        Intent itt = new Intent(this, WifiDirectReceive.class);
+        startActivity(itt);
+    }
 
-        // Send msg to seller.
-        Intent serviceIntent = new Intent(this, DataTransferService.class);
-        serviceIntent.setAction(DataTransferService.ACTION_SEND_DATA);
-        serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS, hostAddress);
-        if (null != jsonACK) {
+    Intent serviceIntent = null;
+
+    private void sendMessage() {
+
+        try {
+
+            boolean instance = DataTransferService.isInstanceCreated();
+            if(!instance) {
+                serviceIntent = new Intent(this, DataTransferService.class);
+            }
+
+            // Send msg to seller.
+            serviceIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS, remoteMacAddress);
+
             serviceIntent.putExtra(DataTransferService.MESSAGE, jsonACK);
+
+            Log.i("bizzmark", "Customer Address: " + remoteMacAddress);
+            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 9999);
+
+            // Start service.
+            startService(serviceIntent);
+
+        } catch (Throwable th) {
+            th.printStackTrace();
         }
-
-        Log.i("bizzmark", "owenerip is " + hostAddress);
-        serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 9999);
-
-        // Start service.
-        this.startService(serviceIntent);
-
     }
 
 }
