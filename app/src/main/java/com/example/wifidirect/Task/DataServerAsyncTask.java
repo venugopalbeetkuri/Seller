@@ -2,8 +2,12 @@ package com.example.wifidirect.Task;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,17 +55,7 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
 
              String str = baos.toString();
 
-            /*try {
-
-                OutputStream outputStream = client.getOutputStream();
-                outputStream.write("Success\r\n".getBytes());
-            }
-            catch (Throwable th){
-                th.printStackTrace();
-            }*/
-
             serverSocket.close();
-
             return str;
 
         } catch (Throwable e) {
@@ -85,6 +79,8 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
 
                 Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
                 String type = points.getType().toString();
+
+                // remoteAddress = points.getMacAddress();
 
                 //saveToFireBase(points);
                 if(type.equalsIgnoreCase("Earn")){
@@ -111,6 +107,18 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPreExecute() {
 
+    }
+
+    public void showToast(String message) {
+        final String msg = message;
+        new Handler(Looper.getMainLooper())
+                .post(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(activity.getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                            }
+                        });
     }
 
 }

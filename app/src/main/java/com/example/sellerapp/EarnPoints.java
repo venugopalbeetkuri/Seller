@@ -3,6 +3,7 @@ package com.example.sellerapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import com.example.db.PointsBO;
 import com.example.db.StoreBO;
 import com.example.login.LoginActivity;
 import com.example.util.Utility;
+import com.example.wifidirect.Service.DataTransferService;
 import com.example.wifidirect.WifiDirectReceive;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -40,6 +42,7 @@ public class EarnPoints extends AppCompatActivity {
     SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
     String earnString = null;
+    String remoteMacAddress = null;
 
 
     PointsBO points = null;
@@ -52,6 +55,8 @@ public class EarnPoints extends AppCompatActivity {
 
         Intent intent = getIntent();
         earnString = intent.getStringExtra("earnRedeemString");
+
+        remoteMacAddress = intent.getStringExtra("remoteAddress");
 
         Gson gson = new Gson();
         points = gson.fromJson(earnString, PointsBO.class);
@@ -136,14 +141,11 @@ public class EarnPoints extends AppCompatActivity {
             public void onClick(View arg0) {
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
 
-                String formattedDate = df.format(c.getTime());
-                String storeName = points.getStoreName();
-
-                DatabaseReference earnDatabase = clientDatabase.child(storeName);
-                DatabaseReference time = earnDatabase.child(formattedDate);
-                time.setValue(points);
-                Utility.calculateTotal(storeName);
+                // Send acknowledgement to client.
                 sendAcknowledgement(true);
+
+                // Save to database.
+                saveToDataBase();
                 finish();
             }
 
@@ -158,8 +160,8 @@ public class EarnPoints extends AppCompatActivity {
             public void onClick(View arg0) {
 
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
-                /*Intent itt = new Intent(EarnPoints.this, ReportPoints.class);
-                startActivity(itt);*/
+
+                // Send acknowledgement to client.
                 sendAcknowledgement(false);
                 finish();
             }
@@ -183,11 +185,55 @@ public class EarnPoints extends AppCompatActivity {
 
         Gson gson = Utility.getGsonObject();
         jsonACK = gson.toJson(ack);
+        sendMessage();
 
-
-        Intent intent = new Intent(this, WifiDirectReceive.class);
-        intent.putExtra("jsonACK", jsonACK);
-        startActivity(intent);
+        Intent itt = new Intent(this, WifiDirectReceive.class);
+        startActivity(itt);
     }
+
+    Intent serviceIntent = null;
+
+    private void sendMessage() {
+
+        try {
+
+            boolean instance = DataTransferService.isInstanceCreated();
+            if(!instance) {
+                serviceIntent = new Intent(this, DataTransferService.class);
+            }
+
+            // Send msg to seller.
+            serviceIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS, remoteMacAddress);
+
+            serviceIntent.putExtra(DataTransferService.MESSAGE, jsonACK);
+
+            Log.i("bizzmark", "Customer Address: " + remoteMacAddress);
+            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 9999);
+
+            // Start service.
+            startService(serviceIntent);
+
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+    }
+
+    private void saveToDataBase() {
+
+        try {
+
+            String formattedDate = df.format(c.getTime());
+            String storeName = points.getStoreName();
+
+            DatabaseReference earnDatabase = clientDatabase.child(storeName);
+            DatabaseReference time = earnDatabase.child(formattedDate);
+            time.setValue(points);
+            Utility.calculateTotal(storeName);
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+    }
+
 
 }

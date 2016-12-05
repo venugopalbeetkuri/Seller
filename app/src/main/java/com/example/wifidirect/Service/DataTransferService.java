@@ -19,7 +19,7 @@ import java.net.Socket;
  */
 public class DataTransferService extends IntentService {
 
-    private static final int SOCKET_TIMEOUT = 60000;
+    private static final int SOCKET_TIMEOUT = 5000;
     public static final String ACTION_SEND_DATA = "SEND_DATA";
     public static final String EXTRAS_GROUP_OWNER_ADDRESS = "host";
     public static final String EXTRAS_GROUP_OWNER_PORT = "port";
@@ -31,6 +31,24 @@ public class DataTransferService extends IntentService {
 
     public DataTransferService() {
         super("DataTransferService");
+    }
+
+    private static DataTransferService instance = null;
+
+    public static boolean isInstanceCreated() {
+        return instance != null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        instance = this;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        instance = null;
     }
 
     /*
@@ -73,13 +91,17 @@ public class DataTransferService extends IntentService {
             } finally {
 
                 try{
-                    outputStream.close();
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }
 
                 try{
-                    inputStream.close();
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }

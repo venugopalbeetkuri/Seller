@@ -9,13 +9,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
-
 import com.example.R;
 import com.example.db.AcknowledgePoints;
 import com.example.db.PointsBO;
 import com.example.util.Utility;
 
 import com.example.wifidirect.Service.DataTransferService;
+import com.example.wifidirect.WifiDirectReceive;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -37,6 +37,9 @@ public class RedeemPoints extends AppCompatActivity {
     PointsBO points = null;
     String redeemString = null;
 
+    String jsonACK = null;
+    String remoteMacAddress = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,8 @@ public class RedeemPoints extends AppCompatActivity {
 
         Intent intent = getIntent();
         redeemString = intent.getStringExtra("earnRedeemString");
+
+        remoteMacAddress = intent.getStringExtra("remoteAddress");
 
         Gson gson = new Gson();
         points = gson.fromJson(redeemString, PointsBO.class);
@@ -72,14 +77,10 @@ public class RedeemPoints extends AppCompatActivity {
             public void onClick(View arg0) {
 
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
-                /*Intent itt = new Intent(RedeemPoints.this, ReportPoints.class);
-                startActivity(itt);*/
                 sendAcknowledgement(false);
                 finish();
             }
-
         });
-
     }
 
     public void addListenerOnAcceptButton() {
@@ -92,19 +93,11 @@ public class RedeemPoints extends AppCompatActivity {
             public void onClick(View arg0) {
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
 
-                String formattedDate = df.format(c.getTime());
-                //String accept = acceptdate.format(c.getTime());
-
-                String storeName = points.getStoreName();
-
-                DatabaseReference pointsDB = clientDatabase.child(storeName);
-                DatabaseReference time = pointsDB.child(formattedDate);
-                time.setValue(points);
-                //time.setValue(accept);
-
-                Utility.calculateTotal(storeName);
+                // Send acknowledgement to customer.
                 sendAcknowledgement(true);
 
+                // Save to database.
+                saveToDataBase();
                 finish();
             }
 
@@ -124,24 +117,56 @@ public class RedeemPoints extends AppCompatActivity {
         }
 
         Gson gson = Utility.getGsonObject();
-        String jsonACK = gson.toJson(ack);
+        jsonACK = gson.toJson(ack);
+        sendMessage();
 
-        String hostAddress = null;
+        // After sending acknowledgement move to first screen.
+        Intent itt = new Intent(this, WifiDirectReceive.class);
+        startActivity(itt);
+    }
 
-        // Send msg to seller.
-        Intent serviceIntent = new Intent(this, DataTransferService.class);
-        serviceIntent.setAction(DataTransferService.ACTION_SEND_DATA);
-        serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS, hostAddress);
-        if (null != jsonACK) {
+    Intent serviceIntent = null;
+
+    private void sendMessage() {
+
+        try {
+
+            boolean instance = DataTransferService.isInstanceCreated();
+            if(!instance) {
+                serviceIntent = new Intent(this, DataTransferService.class);
+            }
+
+            // Send msg to seller.
+            serviceIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS, remoteMacAddress);
+
             serviceIntent.putExtra(DataTransferService.MESSAGE, jsonACK);
+
+            Log.i("bizzmark", "Customer Address: " + remoteMacAddress);
+            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 9999);
+
+            // Start service.
+            startService(serviceIntent);
+
+        } catch (Throwable th) {
+            th.printStackTrace();
         }
+    }
 
-        Log.i("bizzmark", "owenerip is " + hostAddress);
-        serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 9999);
+    private void saveToDataBase() {
 
-        // Start service.
-        this.startService(serviceIntent);
+        try {
 
+            String formattedDate = df.format(c.getTime());
+            String storeName = points.getStoreName();
+
+            DatabaseReference earnDatabase = clientDatabase.child(storeName);
+            DatabaseReference time = earnDatabase.child(formattedDate);
+            time.setValue(points);
+            Utility.calculateTotal(storeName);
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
     }
 
 }

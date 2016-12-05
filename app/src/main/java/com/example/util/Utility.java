@@ -72,6 +72,11 @@ public class Utility {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
+                    Utility.totalBillAmount = 0;
+                    Utility.totalDiscount = 0;
+                    Utility.totalBillAmount = 0;
+
+
                     for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
 
                         HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
