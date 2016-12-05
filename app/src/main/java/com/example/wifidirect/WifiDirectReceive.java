@@ -452,7 +452,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         try {
 
             Gson gson = new Gson();
-            PointsBO points = new PointsBO("Earn", "2000", "venu-xyz", "200", "xyz", "0","16112016");
+            PointsBO points = new PointsBO("redeem", "2000", "storeexample", "400", "xyz", "0","05/12/2016");
             String result = gson.toJson(points);
 
             Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
