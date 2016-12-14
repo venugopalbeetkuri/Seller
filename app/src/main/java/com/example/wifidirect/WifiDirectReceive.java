@@ -449,6 +449,9 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         // ResetReceiver();
         discoverPeers();
         info = null;
+
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(false);
         //}
     }
 
