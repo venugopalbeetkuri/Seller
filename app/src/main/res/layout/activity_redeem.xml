@@ -19,104 +19,7 @@
 
 
     <LinearLayout
-
-        android:layout_margin="10dp"
-        android:orientation="horizontal"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_weight="1">
-        <TextView
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
-            android:textColor="#000"
-            android:textSize="20dp"
-            android:gravity="left"
-            android:padding="3dip"
-            android:text="Redeem Points " />
-</LinearLayout>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_weight="1">
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
-            android:textColor="#000"
-            android:textSize="20dp"
-            android:gravity="left"
-            android:padding="3dip"
-            android:text="00"
-            android:id="@+id/redeemPoints" />
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_gravity="center"
-            app:srcCompat="@drawable/points"
-            android:id="@+id/imageView3"/>
-</LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-
-        android:layout_margin="10dp"
-        android:orientation="horizontal"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
-            android:textColor="#000"
-            android:textSize="20dp"
-            android:gravity="left"
-            android:padding="3dip"
-            android:text="Discount Amount  " />
-            </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
-            android:textColor="#000"
-            android:textSize="20dp"
-            android:gravity="left"
-            android:padding="3dip"
-            android:text="00"
-            android:id="@+id/discountAmount" />
-
-            <ImageView
-                android:layout_gravity="center"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginLeft="10dp"
-
-                app:srcCompat="@drawable/rupee"
-                android:id="@+id/imageView4"/>
-
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_margin="10dp"
+        android:layout_weight="1"
         android:orientation="horizontal"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
@@ -154,10 +57,12 @@
             android:id="@+id/billAmount" />
 
         <ImageView
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:gravity="left"
+            android:padding="3dip"
             app:srcCompat="@drawable/rupee"
             android:id="@+id/imageView5"/>
      </LinearLayout>
@@ -165,7 +70,156 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1">
+        <TextView
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:textColor="#000"
+            android:textSize="20dp"
+            android:gravity="left"
+            android:padding="3dip"
+            android:text="Redeem Points " />
+</LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:textColor="#000"
+            android:textSize="20dp"
+            android:gravity="left"
+            android:padding="3dip"
+            android:text="00"
+            android:id="@+id/redeemPoints" />
+
+        <ImageView
+            android:layout_height="30dp"
+            android:layout_width="30dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:gravity="left"
+            android:padding="3dip"
+            app:srcCompat="@drawable/points"
+            android:id="@+id/imageView3"/>
+</LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:textColor="#000"
+            android:textSize="20dp"
+            android:gravity="left"
+            android:padding="3dip"
+            android:text="Discount Amount  " />
+            </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:textColor="#000"
+            android:textSize="20dp"
+            android:gravity="left"
+            android:padding="3dip"
+            android:text="00"
+            android:id="@+id/discountAmount" />
+
+            <ImageView
+                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:gravity="left"
+                android:padding="3dip"
+                app:srcCompat="@drawable/rupee"
+                android:id="@+id/imageView4"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:textColor="#000"
+                android:textSize="20dp"
+                android:gravity="left"
+                android:padding="3dip"
+                android:text="New BillAmount " />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:textColor="#000"
+                android:textSize="20dp"
+                android:gravity="left"
+                android:padding="3dip"
+                android:text="00"
+                android:id="@+id/newBillAmount" />
+
+            <ImageView
+                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:gravity="left"
+                android:padding="3dip"
+                app:srcCompat="@drawable/rupee"
+                android:id="@+id/imageV"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:gravity="center_horizontal">

@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.R;
 import com.example.db.AcknowledgePoints;
 import com.example.db.PointsBO;
@@ -33,14 +35,16 @@ public class EarnPoints extends AppCompatActivity {
     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     DatabaseReference storeDatabase = database.child("store");
     DatabaseReference clientDatabase = database.child("client");
-
+    private FirebaseAuth firebaseAuth;
 
     TextView earnPoints,billAmount;
     final static String log = "Seller app";
 
+    StoreBO store;
+
     Calendar c = Calendar.getInstance();
     SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-
+    int allpoint;
     String earnString = null;
     String remoteMacAddress = null;
 
@@ -52,6 +56,11 @@ public class EarnPoints extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_earn);
+
+        //firebaseAuth = FirebaseAuth.getInstance();
+
+        //String stor = store.getEmailId().toString();
+        //Toast.makeText(getApplicationContext(),stor,Toast.LENGTH_SHORT).show();
 
         Intent intent = getIntent();
         earnString = intent.getStringExtra("earnRedeemString");
@@ -141,12 +150,17 @@ public class EarnPoints extends AppCompatActivity {
             public void onClick(View arg0) {
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
 
-                // Send acknowledgement to client.
-                sendAcknowledgement(true);
 
                 // Save to database.
                 saveToDataBase();
+
+                // Send acknowledgement to client.
+                sendAcknowledgement(true);
+
                 finish();
+                Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
+                startActivity(intent);
+
             }
 
         });
@@ -161,9 +175,13 @@ public class EarnPoints extends AppCompatActivity {
 
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
 
+                finish();
+                Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
+                startActivity(intent);
+
                 // Send acknowledgement to client.
                 sendAcknowledgement(false);
-                finish();
+
             }
 
         });
@@ -178,6 +196,7 @@ public class EarnPoints extends AppCompatActivity {
         if(success) {
 
             ack = new AcknowledgePoints("success", earnString);
+            Toast.makeText(getApplicationContext(),"Acknowledgement initiated...",Toast.LENGTH_SHORT).show();
         } else {
 
             ack = new AcknowledgePoints("failure", earnString);
@@ -187,8 +206,8 @@ public class EarnPoints extends AppCompatActivity {
         jsonACK = gson.toJson(ack);
         sendMessage();
 
-        Intent itt = new Intent(this, WifiDirectReceive.class);
-        startActivity(itt);
+        //Intent itt = new Intent(this, WifiDirectReceive.class);
+        //startActivity(itt);
     }
 
     Intent serviceIntent = null;
@@ -229,7 +248,13 @@ public class EarnPoints extends AppCompatActivity {
             DatabaseReference earnDatabase = clientDatabase.child(storeName);
             DatabaseReference time = earnDatabase.child(formattedDate);
             time.setValue(points);
-            Utility.calculateTotal(storeName);
+
+/*            DatabaseReference overall = database.child("overall");
+            String allpoints = points.getPoints();
+            allpoint = Integer.parseInt(allpoints);
+            //allpoint+=allpoint;
+            overall.setValue(allpoint);*/
+
         } catch (Throwable th) {
             th.printStackTrace();
         }
