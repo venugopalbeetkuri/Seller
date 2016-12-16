@@ -52,7 +52,12 @@ import com.example.wifidirect.Service.DataTransferService;
 import com.example.wifidirect.Task.DataServerAsyncTask;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 public class WifiDirectReceive extends AppCompatActivity implements View.OnClickListener {
@@ -71,13 +76,19 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     private MenuInflater menuInflater;
     static boolean calledAlready = false;
     private DataServerAsyncTask mDataTask;
-
+    private TextView pointsGiven, totalsale = null, totaldiscount = null;
+    int point;
+    int bil;
+    int b;
+    int p;
+    int d;
+    boolean check= false;
+   // ReportActivity reportActivity;
     // For peers information.
     private List<HashMap<String, String>> peersshow = new ArrayList();
 
     // All the peers.
     private List peers = new ArrayList();
-    private TextView pointsGiven, totalsale, totaldiscount;
 
     boolean sendAck = false;
     String jsonACK = null;
@@ -85,9 +96,9 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wifi_direct_client);
-
         info = null;
 
         if (!calledAlready) {
@@ -110,10 +121,10 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
        //String storeName = getStoreName();
 
 
-        Utility.calculateTotal("xyz");
+        //Utility.calculateTotal("xyz");
         report = (Button) findViewById(R.id.report);
 
-        updatePoints();
+        //updatePoints();
 
         initView();
         initIntentFilter();
@@ -127,35 +138,60 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
             mDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference clientDatabase = database.child("client");
+        Query query = clientDatabase.child("storeexample");
+        query.addValueEventListener(new ValueEventListener() {
 
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
+
+                    HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
+                    String type = timeStampKey.get("type");
+                    String pointsStr = timeStampKey.get("points");
+                    String billAmountStr = timeStampKey.get("billAmount");
+                    String discountAmountStr = timeStampKey.get("disCountAmount");
+                    String date = timeStampKey.get("time");
+
+                    try {
+                        point = Integer.parseInt(pointsStr);
+                        p += point;
+
+                        bil = Integer.parseInt(billAmountStr);
+                        b += bil;
+                    }catch(NumberFormatException ex) {
+                        ex.printStackTrace();
+                    }
+//                    int disco = Integer.parseInt(discountAmountStr);
+//                    d=d+disco;
+                }
+                totalprint();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
     }
 
-    private void updatePoints() {
-        try {
-
-            Integer totalPoints = Utility.totalEarnPoints - Utility.totalRedeemPoints;
-            Integer totalBillAmount = Utility.totalBillAmount;
-            Integer totalDiscountmount = Utility.totalDiscount;
-
-            pointsGiven = (TextView) findViewById(R.id.pointsgiven);
-            totalsale = (TextView) findViewById(R.id.totalsale);
-            totaldiscount=(TextView) findViewById(R.id.discountgiven);
-
-            pointsGiven.setText(totalPoints.toString());
-            totalsale.setText(totalBillAmount.toString());
-            totaldiscount.setText(totalDiscountmount.toString());
-
-            Utility.updateReference(pointsGiven, totalsale, totaldiscount);
-
-
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
+    public void totalprint()
+    {
+        String point = Integer.toString(p);
+        pointsGiven.setText(point);
+        String bill = Integer.toString(b);
+        totalsale.setText(bill);
+        totaldiscount.setText(point);
+        //pointsGiven.setText(p);
+        //totaldiscount.setText(b);
     }
 
     private void initView() {
 
+        pointsGiven = (TextView) findViewById(R.id.pointsgiven);
+        totalsale = (TextView) findViewById(R.id.totalsale);
+        totaldiscount = (TextView)findViewById(R.id.discountgiven);
         txtView = (TextView) findViewById(R.id.tv1);
         btnRefresh = (Button)findViewById(R.id.btnRefresh);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
@@ -347,7 +383,8 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onSuccess() {
-                // Toast.makeText(getApplicationContext(),"WifiP2pManager.discoverPeers success.",Toast.LENGTH_SHORT).show();
+                 Toast.makeText(getApplicationContext(),"WifiP2pManager.discoverPeers success.",Toast.LENGTH_SHORT).show();
+                Log.i("Connection  :  ","Sucesssss");
             }
 
             @Override
@@ -387,6 +424,9 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
         super.onResume();
         registerReceiver(mReceiver, mFilter);
+
+        ResetReceiver();
+        discoverPeers();
     }
 
     @Override
@@ -435,31 +475,21 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         rotation.start();
         refresh.startAnimation(rotation);
 
-        /*if(Utility.isTesting()) {
-
-            saveDataToFireBase();
-        } else {*/
+            ResetReceiver();
+            //wifiManager.setWifiEnabled(true);
+            //registerReceiver(mReceiver, mFilter);
+            discoverPeers();
 
         // New code Start.
-        peers.clear();
-        peersshow.clear();
-        mAdapter = new WifiAdapter(peersshow);
-        mRecyclerView.setAdapter(mAdapter);
+/*        */
 
-        // ResetReceiver();
-        discoverPeers();
-        info = null;
-
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        wifiManager.setWifiEnabled(false);
-        //}
     }
 
     private void saveDataToFireBase() {
         try {
 
             Gson gson = new Gson();
-            PointsBO points = new PointsBO("Earn", "2000", "venu-xyz", "200", "xyz", "0", "macId");
+            PointsBO points = new PointsBO("Earn", "2000", "storeexample", "200", "DeviceId", "0", "08/12/2016");
             String result = gson.toJson(points);
 
             Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
@@ -493,6 +523,7 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
+                        //StopConnect();
                     }
                 });
         AlertDialog alert = builder.create();
@@ -512,11 +543,22 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
         if(item.getItemId()==R.id.share) {
 
-            if(Utility.isTesting()) {
-                deletePersistentGroups();
-            } else {
-                shareButtonFunctionality();
+               /*deletePersistentGroups();
+            StopConnect();
+            peers.clear();
+            peersshow.clear();
+            mAdapter = new WifiAdapter(peersshow);
+            mRecyclerView.setAdapter(mAdapter);
+
+            discoverPeers();
+            info = null;
+*/
+            WifiManager wifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+            for (WifiConfiguration currentConfiguration : wifiManager.getConfiguredNetworks()) {
+                wifiManager.removeNetwork(currentConfiguration.networkId);
             }
+
+            Toast.makeText(getApplicationContext(), "Connection Removed !", Toast.LENGTH_SHORT).show();
             return super.onOptionsItemSelected(item);
         } else {
 

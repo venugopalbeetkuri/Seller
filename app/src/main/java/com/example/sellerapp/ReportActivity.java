@@ -28,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +39,10 @@ import java.util.List;
 
 import static android.R.attr.type;
 import static com.example.R.id.billamount;
+import static com.example.R.id.lastweek;
+import static com.example.R.id.points;
+import static com.example.R.id.time;
+import static com.example.R.id.today;
 
 /**
  * Created by Chalam on 11/29/2016.
@@ -45,39 +51,66 @@ import static com.example.R.id.billamount;
 public class ReportActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private MenuInflater menuInflater;
     int i = 0;
+    int check = 0;
+    Date datee;
     //StoreBO storeBO;
+    String storename = "teststore";
     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     DatabaseReference clientDatabase = database.child("client");
-    Query query = clientDatabase.child("storeexample");
-
-
+    Query query = clientDatabase.child(storename);
+    String firstdayoflastmonth;
+    String lastdayoflastmonth;
+    String firstdayofthismonth;
+    TextView bill,points,discount;
+    int point;
+    int bil;
+    int b;
+    int p;
+    int d;
+    Boolean ischecked = false;
     TableLayout stk;
     Spinner spinner;
     Calendar c = Calendar.getInstance();
 
-    SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+    final TableRow.LayoutParams tableRow = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,TableRow.LayoutParams.WRAP_CONTENT,1f);
+
+    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
     Date yester = new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24));
     Date last7 = new Date(System.currentTimeMillis() - (7000 * 60 * 60 * 24));
-    Date last30 = new Date(System.currentTimeMillis() - (30000 * 60 * 60 * 24));
+    //Date last30 = new Date(System.currentTimeMillis() - (30000 * 60 * 60 * 24));
 
     String presentdate = df.format(c.getTime());
     String yesterday = df.format(yester);
     String last7days = df.format(last7);
-    String last30days = df.format(last30);
-//    String name = "storeexample";
+    //String last30days = df.format(last30);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reportactivity);
 
-        //name = storeBO.getStoreName().toString();
-        //init();
+        c.add(Calendar.MONTH, -1);
+        c.set(Calendar.DATE, 1);
+        Date firstDateOfPreviousMonth = c.getTime();
+        c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
+        Date lastDateOfPreviousMonth = c.getTime();
+        c.add(Calendar.MONTH,1);
+        c.set(Calendar.DATE, 1);
+        Date firstDateOfThisMonth = c.getTime();
+
+        firstdayoflastmonth = df.format(firstDateOfPreviousMonth);
+        lastdayoflastmonth = df.format(lastDateOfPreviousMonth);
+        firstdayofthismonth = df.format(firstDateOfThisMonth);
+
+        bill= (TextView) findViewById(R.id.bill);
+        points = (TextView)findViewById(R.id.points);
+        discount = (TextView) findViewById(R.id.discount);
 
         List<String> categories = new ArrayList<String>();
         categories.add("Today (" + presentdate + ")");
         categories.add("Last Week (" + last7days + ") - (" + yesterday + ")");
-        categories.add("Last Month (" + last30days + ") - (" + yesterday + ")");
-
+        categories.add("Last Month (" + firstdayoflastmonth.toString() + ") - (" + lastdayoflastmonth.toString() + ")");
+        //categories.add("All Time");
 
         spinner = (Spinner) findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(this);
@@ -92,15 +125,48 @@ public class ReportActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
         String item = adapterView.getItemAtPosition(position).toString();
-        //init();
-        Toast.makeText(getApplicationContext(), "Selected : " + item, Toast.LENGTH_SHORT).show();
+
+
+        if(position == 0){
+            if(ischecked == false) {
+                init();
+                Toast.makeText(getApplicationContext(), "Selected : Today !", Toast.LENGTH_SHORT).show();
+            }else
+            {
+                clear();
+                init();
+            }
+        }
+        if(position == 1)
+        {
+            if(ischecked == false) {
+                initoflastweek();
+                Toast.makeText(getApplicationContext(), "Selected : Last Week", Toast.LENGTH_SHORT).show();
+            }else
+            {
+                clear();
+                initoflastweek();
+            }
+        }
+        if(position==2) {
+            if(ischecked == false)
+            {
+                initoflastmonth();
+                Toast.makeText(getApplicationContext(), "Selected : Last Month", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                clear();
+                initoflastmonth();
+            }
+        }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -114,54 +180,326 @@ public class ReportActivity extends AppCompatActivity implements AdapterView.OnI
 //        stk.removeAllViewsInLayout();
         if(item.getItemId()==R.id.today)
         {
-            init();
-            Toast.makeText(getApplicationContext(),"Today",Toast.LENGTH_SHORT).show();
+            if(ischecked == false)
+            {
+                init();
+                Toast.makeText(getApplicationContext(), "Today", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"  Bill : "+b+"  Points : "+p+"  Discount : "+d,Toast.LENGTH_LONG).show();
+                totalprint();
+            }
+            else
+            {
+                clear();
+                init();
+                //totalprint();
+            }
         }
         if(item.getItemId()==R.id.lastweek)
         {
-            Toast.makeText(getApplicationContext(),"Last Week",Toast.LENGTH_SHORT).show();
+            if(ischecked == false) {
+                init();
+                Toast.makeText(getApplicationContext(), "Last Week", Toast.LENGTH_SHORT).show();
+            }else
+            {
+                clear();
+                init();
+            }
         }
         if(item.getItemId()==R.id.lastmonth)
         {
-            Toast.makeText(getApplicationContext(),"Last Month",Toast.LENGTH_SHORT).show();
+            if(ischecked == false) {
+                init();
+                Toast.makeText(getApplicationContext(), "Last Week", Toast.LENGTH_SHORT).show();
+
+            }else
+            {
+                clear();
+                init();
+            }
         }
         //stk.removeAllViews();
         return super.onOptionsItemSelected(item);
+    }*/
+
+    public void clear()
+    {
+        stk.removeAllViewsInLayout();
+        p=0;b=0;d=0;
+        ischecked = false;
+    }
+    public void totalprint()
+    {
+        points.setText("Points : "+p);
+        bill.setText("Bill Amount : "+b);
+        discount.setText("Discount : "+d);
     }
 
     public void init() {
+        ischecked = true;
+        tableRow.setMargins(25,25,25,25);
+        tableRow.weight=1;
         stk = (TableLayout) findViewById(R.id.table_main);
-        TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT,1f);
-        //layoutParams.setMargins(25, 25, 25, 25);
         TableRow tbrow0 = new TableRow(this);
-        tbrow0.setLayoutParams(layoutParams);
+
+        final TextView tv0 = new TextView(this);
+        tv0.setLayoutParams(tableRow);
+        tv0.setText(" Date ");
+        tv0.setTextColor(Color.WHITE);
+        tv0.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv0);
 
         final TextView tv1 = new TextView(this);
-        tv1.setText(" Date ");
+        tv1.setLayoutParams(tableRow);
+        tv1.setText(" Points ");
         tv1.setTextColor(Color.WHITE);
+        tv1.setGravity(Gravity.CENTER);
         tbrow0.addView(tv1);
 
         final TextView tv2 = new TextView(this);
+        tv2.setLayoutParams(tableRow);
         tv2.setText(" Bill Amount ");
         tv2.setTextColor(Color.WHITE);
+        tv2.setGravity(Gravity.CENTER);
         tbrow0.addView(tv2);
 
         final TextView tv3 = new TextView(this);
-        tv3.setText(" Points ");
+        tv3.setLayoutParams(tableRow);
+        tv3.setText(" Discount ");
         tv3.setTextColor(Color.WHITE);
+        tv3.setGravity(Gravity.CENTER);
         tbrow0.addView(tv3);
 
-        final TextView tv4 = new TextView(this);
-        tv4.setText(" Discount ");
-        tv4.setTextColor(Color.WHITE);
-        tbrow0.addView(tv4);
+        stk.addView(tbrow0);
+        query.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
+
+                    HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
+                    String type = timeStampKey.get("type");
+                    String pointsStr = timeStampKey.get("points");
+                    String billAmountStr = timeStampKey.get("billAmount");
+                    String discountAmountStr = timeStampKey.get("disCountAmount");
+                    String date = timeStampKey.get("time");
+                    try {
+                        point = Integer.parseInt(pointsStr);
+                        p += point;
+
+                        bil = Integer.parseInt(billAmountStr) ;
+                        b+=bil;
+                    }catch(NumberFormatException ex) {
+                        ex.printStackTrace();
+                    }
+                    print(type,pointsStr,billAmountStr,discountAmountStr,date);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void initoftoday()
+    {
+        ischecked = true;
+        tableRow.setMargins(25,25,25,25);
+        tableRow.weight=1;
+        stk = (TableLayout) findViewById(R.id.table_main);
+        TableRow tbrow0 = new TableRow(this);
+
+        final TextView tv0 = new TextView(this);
+        tv0.setLayoutParams(tableRow);
+        tv0.setText(" Date ");
+        tv0.setTextColor(Color.WHITE);
+        tv0.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv0);
+
+        final TextView tv1 = new TextView(this);
+        tv1.setLayoutParams(tableRow);
+        tv1.setText(" Points ");
+        tv1.setTextColor(Color.WHITE);
+        tv1.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv1);
+
+        final TextView tv2 = new TextView(this);
+        tv2.setLayoutParams(tableRow);
+        tv2.setText(" Bill Amount ");
+        tv2.setTextColor(Color.WHITE);
+        tv2.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv2);
+
+        final TextView tv3 = new TextView(this);
+        tv3.setLayoutParams(tableRow);
+        tv3.setText(" Discount ");
+        tv3.setTextColor(Color.WHITE);
+        tv3.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv3);
+
+        stk.addView(tbrow0);
+        query.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
+
+                    HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
+                    String type = timeStampKey.get("type");
+                    String pointsStr = timeStampKey.get("points");
+                    String billAmountStr = timeStampKey.get("billAmount");
+                    String discountAmountStr = timeStampKey.get("disCountAmount");
+                    String date = timeStampKey.get("time");
+
+                    if(date.equalsIgnoreCase(presentdate)){
+                        point= Integer.parseInt(pointsStr);
+                        p+=point;
+
+                        bil = Integer.parseInt(billAmountStr) ;
+                        b+=bil;
+
+                        int disco = Integer.parseInt(discountAmountStr);
+                        d=d+disco;
+                        print(type,pointsStr,billAmountStr,discountAmountStr,date);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void initoflastweek()
+    {
+        ischecked = true;
+        tableRow.setMargins(25,25,25,25);
+        tableRow.weight=1;
+        stk = (TableLayout) findViewById(R.id.table_main);
+        TableRow tbrow0 = new TableRow(this);
+
+        final TextView tv0 = new TextView(this);
+        tv0.setLayoutParams(tableRow);
+        tv0.setText(" Date ");
+        tv0.setTextColor(Color.WHITE);
+        tv0.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv0);
+
+        final TextView tv1 = new TextView(this);
+        tv1.setLayoutParams(tableRow);
+        tv1.setText(" Points ");
+        tv1.setTextColor(Color.WHITE);
+        tv1.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv1);
+
+        final TextView tv2 = new TextView(this);
+        tv2.setLayoutParams(tableRow);
+        tv2.setText(" Bill Amount ");
+        tv2.setTextColor(Color.WHITE);
+        tv2.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv2);
+
+        final TextView tv3 = new TextView(this);
+        tv3.setLayoutParams(tableRow);
+        tv3.setText(" Discount ");
+        tv3.setTextColor(Color.WHITE);
+        tv3.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv3);
 
         stk.addView(tbrow0);
 
-        final TextView t1v = new TextView(this);
-        final TextView t2v = new TextView(this);
-        final TextView t3v = new TextView(this);
-        final TextView t4v = new TextView(this);
+        query.addValueEventListener(new ValueEventListener() {
+
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
+
+                    HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
+                    String type = timeStampKey.get("type");
+                    String pointsStr = timeStampKey.get("points");
+                    String billAmountStr = timeStampKey.get("billAmount");
+                    String discountAmountStr = timeStampKey.get("disCountAmount");
+                    String date = timeStampKey.get("time");
+
+                    if(date!=null) {
+                        try {
+                            datee = df.parse(date);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        c.setTime(datee);
+                        c.add(Calendar.DATE,1);
+                        String converteddate = df.format(c.getTime());
+
+                        Toast.makeText(getApplicationContext(),converteddate,Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(),date,Toast.LENGTH_SHORT).show();
+                        if(converteddate.equals(lastweek)) {
+                            Toast.makeText(getApplicationContext(),converteddate,Toast.LENGTH_SHORT).show();
+                            check = 1;
+                        }
+                    }
+                    if(date.equalsIgnoreCase(presentdate))
+                    {
+                        check = 0;
+                    }
+                    if(check== 1){
+                        point= Integer.parseInt(pointsStr);
+                        p+=point;
+
+                        bil = Integer.parseInt(billAmountStr) ;
+                        b+=bil;
+
+                        int disco = Integer.parseInt(discountAmountStr);
+                        d=d+disco;
+                        print(type,pointsStr,billAmountStr,discountAmountStr,date);
+                     }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+    public void initoflastmonth()
+    {
+        ischecked = true;
+        tableRow.setMargins(25,25,25,25);
+        tableRow.weight=1;
+        stk = (TableLayout) findViewById(R.id.table_main);
+        TableRow tbrow0 = new TableRow(this);
+
+        final TextView tv0 = new TextView(this);
+        tv0.setLayoutParams(tableRow);
+        tv0.setText(" Date ");
+        tv0.setTextColor(Color.WHITE);
+        tv0.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv0);
+
+        final TextView tv1 = new TextView(this);
+        tv1.setLayoutParams(tableRow);
+        tv1.setText(" Points ");
+        tv1.setTextColor(Color.WHITE);
+        tv1.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv1);
+
+        final TextView tv2 = new TextView(this);
+        tv2.setLayoutParams(tableRow);
+        tv2.setText(" Bill Amount ");
+        tv2.setTextColor(Color.WHITE);
+        tv2.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv2);
+
+        final TextView tv3 = new TextView(this);
+        tv3.setLayoutParams(tableRow);
+        tv3.setText(" Discount ");
+        tv3.setTextColor(Color.WHITE);
+        tv3.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv3);
+
+        stk.addView(tbrow0);
         query.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -173,92 +511,80 @@ public class ReportActivity extends AppCompatActivity implements AdapterView.OnI
                     String pointsStr = timeStampKey.get("points");
                     String billAmountStr = timeStampKey.get("billAmount");
                     String discountAmountStr = timeStampKey.get("disCountAmount");
+                    String date = timeStampKey.get("time");
+                    //Toast.makeText(getApplicationContext(),date,Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(),"Present Date : "+presentdate,Toast.LENGTH_SHORT).show();
+                    if(date.equalsIgnoreCase(firstdayoflastmonth)) {
+                        check = 1;
+                    }
+                    if(date.equalsIgnoreCase(firstdayofthismonth))
+                    {
+                        //Toast.makeText(getApplicationContext(),presentdate,Toast.LENGTH_SHORT).show();
+                        check = 0;
+                    }
+                    if(check== 1){
+                        point= Integer.parseInt(pointsStr);
+                        p+=point;
 
-                    print(type,pointsStr,billAmountStr,discountAmountStr);
+                        bil = Integer.parseInt(billAmountStr) ;
+                        b+=bil;
+
+                        int disco = Integer.parseInt(discountAmountStr);
+                        d=d+disco;
+                        //Toast.makeText(getApplicationContext(),p+""+b+""+d,Toast.LENGTH_LONG).show();
+                        print(type,pointsStr,billAmountStr,discountAmountStr,date);
+                    }
                 }
-            }
-
-            private void print(String type, String pointsStr, String billAmountStr, String discountAmountStr) {
-
-                TableRow tbrow = new TableRow(getApplicationContext());
-
-                if(type.equalsIgnoreCase("earn"))
-                {
-                    tbrow.setBackgroundColor(Color.parseColor("#FF0000"));
-                }
-                else if(type.equalsIgnoreCase("redeem"))
-                {
-                    tbrow.setBackgroundColor(Color.parseColor("#00FF00"));
-                }
-
-                TextView t0v = new TextView(getApplicationContext());
-                t0v.setText("date");
-                t0v.setTextSize(20);
-                t0v.setTextColor(Color.WHITE);
-                t0v.setGravity(Gravity.CENTER);
-                tbrow.addView(t0v);
-
-                TextView t1v = new TextView(getApplicationContext());
-                t1v.setText(pointsStr);
-                t1v.setTextColor(Color.WHITE);
-                t1v.setGravity(Gravity.CENTER);
-                tbrow.addView(t1v);
-
-                TextView t2v = new TextView(getApplicationContext());
-                t2v.setText(billAmountStr);
-                t2v.setTextColor(Color.WHITE);
-                t2v.setGravity(Gravity.CENTER);
-                tbrow.addView(t2v);
-
-                TextView t3v = new TextView(getApplicationContext());
-                t3v.setText(discountAmountStr);
-                t3v.setTextColor(Color.WHITE);
-                t3v.setGravity(Gravity.CENTER);
-                tbrow.addView(t3v);
-
-                /*TextView t4v = new TextView(getApplicationContext());
-                t4v.setText(discountAmountStr);
-                t4v.setTextColor(Color.WHITE);
-                t4v.setGravity(Gravity.CENTER);
-                tbrow.addView(t4v);*/
-
-                stk.addView(tbrow);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
+    }
+    private void print(String type, String pointsStr, String billAmountStr, String discountAmountStr,String date) {
 
+        TableRow tbrow = new TableRow(getApplicationContext());
+
+        if(type.equalsIgnoreCase("earn"))
+        {
+            tbrow.setBackgroundColor(Color.parseColor("#FF0000"));
+        }
+        else if(type.equalsIgnoreCase("redeem"))
+        {
+            tbrow.setBackgroundColor(Color.parseColor("#00FF00"));
+        }
+
+        TextView t0v = new TextView(getApplicationContext());
+        t0v.setText(date);
+        t0v.setLayoutParams(tableRow);
+        t0v.setTextColor(Color.WHITE);
+        t0v.setGravity(Gravity.CENTER);
+        tbrow.addView(t0v);
+
+        TextView t1v = new TextView(getApplicationContext());
+        t1v.setText(pointsStr);
+        t1v.setLayoutParams(tableRow);
+        t1v.setTextColor(Color.WHITE);
+        t1v.setGravity(Gravity.CENTER);
+        tbrow.addView(t1v);
+
+        TextView t2v = new TextView(getApplicationContext());
+        t2v.setText(billAmountStr);
+        t2v.setLayoutParams(tableRow);
+        t2v.setTextColor(Color.WHITE);
+        t2v.setGravity(Gravity.CENTER);
+        tbrow.addView(t2v);
+
+        TextView t3v = new TextView(getApplicationContext());
+        t3v.setText(discountAmountStr);
+        t3v.setLayoutParams(tableRow);
+        t3v.setTextColor(Color.WHITE);
+        t3v.setGravity(Gravity.CENTER);
+        tbrow.addView(t3v);
+
+        stk.addView(tbrow);
+        totalprint();
     }
 
-    /*public void DataRetrive() {
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference clientDatabase = database.child("client");
-        Query query = clientDatabase.child("storeexample");
-
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
-
-                    HashMap<String, String> timeStampKey = (HashMap)timeStampSnapShot.getValue();
-                    String type = timeStampKey.get("type");
-                    Log.i("Received Type",type);
-                    String pointsStr = timeStampKey.get("points");
-                    Log.i("Received points",pointsStr);
-                    String billAmountStr = timeStampKey.get("billAmount");
-                    Log.i("Received Bill",billAmountStr);
-                    String discountAmountStr = timeStampKey.get("disCountAmount");
-                    Log.i("Received Discount",discountAmountStr);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }*/
 }

@@ -1,5 +1,6 @@
 package com.example.wifidirect.Task;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -14,6 +15,9 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import com.example.db.PointsBO;
 import com.example.sellerapp.EarnPoints;
 import com.example.sellerapp.RedeemPoints;
@@ -21,6 +25,9 @@ import com.example.wifidirect.WifiDirectReceive;
 import com.google.gson.Gson;
 
 public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
+
+    Calendar c = Calendar.getInstance();
+    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
     private WifiDirectReceive activity;
 
@@ -46,6 +53,7 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
                      // client.getRemoteSocketAddress().toString();
 
              Log.i("bizzmark", "Client connected.");
+
              InputStream inputstream = client.getInputStream();
              ByteArrayOutputStream baos = new ByteArrayOutputStream();
              int i;
@@ -68,17 +76,36 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
 
+        String time = df.format(c.getTime());
+
         Log.i("bizzmark", "data on post execute.Result: " + result);
 
         if (result != null) {
 
             try {
-
+                String p = null;
                 Gson gson = new Gson();
                 PointsBO points = gson.fromJson(result, PointsBO.class);
 
-                Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
                 String type = points.getType().toString();
+
+
+                if(type.equalsIgnoreCase("earn")) {
+                    p = points.getPoints();
+                    int i = Integer.parseInt(p);
+                    i = i / 10;
+                    p = String.valueOf(i);
+                }if(type.equalsIgnoreCase("redeem"))
+                {
+                    p=points.getPoints();
+                }
+                points.setPoints(p);
+                points.setTime(time);
+                //points.setDeviceId("MAC Id");
+                Log.i("bizzmark", "data on post execute.Result: " + points.getPoints());
+
+
+                result = gson.toJson(points);
 
                 // remoteAddress = points.getMacAddress();
 
@@ -88,12 +115,15 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
                     Intent intent = new Intent(activity,EarnPoints.class);
                     intent.putExtra("earnRedeemString", result);
                     intent.putExtra("remoteAddress", remoteAddress);
+                    activity.finish();
                     activity.startActivity(intent);
+
                 }else if (type.equalsIgnoreCase("Redeem")){
 
                     Intent intent = new Intent(activity,RedeemPoints.class);
                     intent.putExtra("earnRedeemString", result);
                     intent.putExtra("remoteAddress", remoteAddress);
+                    activity.finish();
                     activity.startActivity(intent);
                 }
             } catch (Exception e) {

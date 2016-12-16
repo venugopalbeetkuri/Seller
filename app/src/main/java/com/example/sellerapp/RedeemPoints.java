@@ -77,8 +77,12 @@ public class RedeemPoints extends AppCompatActivity {
             public void onClick(View arg0) {
 
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
-                sendAcknowledgement(false);
+
                 finish();
+                Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
+                startActivity(intent);
+
+                sendAcknowledgement(false);
             }
         });
     }
@@ -93,12 +97,14 @@ public class RedeemPoints extends AppCompatActivity {
             public void onClick(View arg0) {
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
 
-                // Send acknowledgement to customer.
-                sendAcknowledgement(true);
-
                 // Save to database.
                 saveToDataBase();
                 finish();
+                Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
+                startActivity(intent);
+
+                // Send acknowledgement to customer.
+                sendAcknowledgement(true);
             }
 
         });
@@ -163,7 +169,7 @@ public class RedeemPoints extends AppCompatActivity {
             DatabaseReference earnDatabase = clientDatabase.child(storeName);
             DatabaseReference time = earnDatabase.child(formattedDate);
             time.setValue(points);
-            Utility.calculateTotal(storeName);
+            //Utility.calculateTotal(storeName);
         } catch (Throwable th) {
             th.printStackTrace();
         }

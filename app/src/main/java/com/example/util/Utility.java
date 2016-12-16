@@ -1,6 +1,8 @@
 package com.example.util;
 
+import android.content.Context;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -85,16 +87,17 @@ public class Utility {
                         String billAmountStr = timeStampKey.get("billAmount");
                         String discountAmountStr = timeStampKey.get("disCountAmount");
 
+
                         int billAmount = Integer.parseInt(billAmountStr);
                         Utility.totalBillAmount = Utility.totalBillAmount + billAmount;
 
-                        if(null == discountAmountStr){
+                        /*if(null == discountAmountStr){
                             discountAmountStr = "0";
-                        }
-                        int discountAmount = Integer.parseInt(discountAmountStr);
+                        }*/
+                       /* int discountAmount = Integer.parseInt(discountAmountStr);
                         Utility.totalDiscount = Utility.totalDiscount + discountAmount;
-
-                        if("Earn".equalsIgnoreCase(type)) {
+*/
+                        /*if("Earn".equalsIgnoreCase(type)) {
 
                             int points = Integer.parseInt(pointsStr);
                             Utility.totalEarnPoints = Utility.totalEarnPoints + points;
@@ -102,16 +105,18 @@ public class Utility {
 
                             int points = Integer.parseInt(pointsStr);
                             Utility.totalRedeemPoints = Utility.totalRedeemPoints + points;
-                        }
+                        }*/
                     }
 
                     Integer totalPoints = Utility.totalEarnPoints - Utility.totalRedeemPoints;
                     Integer totalBillAmount = Utility.totalBillAmount;
                     Integer totalDiscountmount = Utility.totalDiscount;
 
+/*
                     Utility.pointsGiven.setText(totalPoints.toString());
                     Utility.totalsale.setText(totalBillAmount.toString());
                     Utility.totaldiscount.setText(totalDiscountmount.toString());
+*/
                 }
 
                 @Override

@@ -85,6 +85,8 @@ public class DataTransferService extends IntentService {
 
                 outputStream.write(message.getBytes());
 
+                showToast(message);
+
             } catch (IOException e) {
 
                 Log.e("bizzmark", e.getMessage());
