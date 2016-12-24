@@ -45,6 +45,7 @@ import java.util.List;
 import com.example.R;
 import com.example.db.PointsBO;
 import com.example.db.StoreBO;
+import com.example.login.LoginActivity;
 import com.example.sellerapp.EarnPoints;
 import com.example.sellerapp.RedeemPoints;
 import com.example.sellerapp.ReportActivity;
@@ -191,9 +192,10 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
                                                 Log.i("Retrive Status : ", "Not Found");
                                                 //Log.i("Store Email ",storeBO.getEmailId());
-                                                time.child("emailId").setValue("Edit email here");
-                                                time.child("percentage").setValue("10");
-                                                time.child("storeName").setValue("storename");
+                                                finish();
+                                                firebaseAuth.signOut();
+                                                Intent intent1 = new Intent(getApplicationContext(), LoginActivity.class);
+                                                startActivity(intent1);
                                                 //Toast.makeText(getApplicationContext(),"Default Percentage is 10%",Toast.LENGTH_LONG).show();
 
                                             }
@@ -667,6 +669,8 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
             firebaseAuth.signOut();
             finish();
+            Intent in = new Intent(getApplicationContext(),LoginActivity.class);
+            startActivity(in);
             return super.onOptionsItemSelected(item);
         }
     }

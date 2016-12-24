@@ -117,73 +117,13 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
                 final String type = points.getType().toString();
 
                 final String storeName = points.getStoreName();
-
-
-                //updateStoreName(storeName);
-                //*********************************************************************************
-/*
-                    try {
-                        //String storeName = pointsBO.getStoreName();
-                        // Getting firebase auth object.
-                        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                        final String storeEmail = firebaseAuth.getCurrentUser().getEmail();
-
-                        if (firebaseAuth.getCurrentUser() != null) {
-
-                            Log.i("Current User ", "Not Null");
-                            Query query = database.child("store");
-
-                            // Query query = storeDatabase.orderByChild("Earn");
-                            query.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    boolean found = false;
-                                    for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
-
-                                        HashMap<String, String> timeStampKey = (HashMap) timeStampSnapShot.getValue();
-
-                                        String storeNameDB = timeStampKey.get("storeName");
-                                        Log.i("Store Name from DB", storeNameDB);
-                                        if (storeNameDB.equalsIgnoreCase(storeName)) {
-                                            Log.i("Store Name Equals :", storeNameDB + " ~ " + storeName);
-                                            String Per = timeStampKey.get("percentage");
-                                            Log.i("Found Percentage : ", Per);
-                                            percentage = Integer.parseInt(Per);
-                                            found = true;
-                                            Toast.makeText(activity, " Retrived Percentage : " + Per, Toast.LENGTH_LONG).show();
-                                            Log.i("Retrived Percentage : ", String.valueOf(percentage));
-                                        }
-                                    }
-                                    if (!found) {
-                                        Log.i("Retrive Status : ", "Not Found");
-                                    */
-/*StoreBO store = new StoreBO(storeEmail, storeName, percentage);
-                                    String formattedDate = df.format(c.getTime());
-                                    DatabaseReference time = storeDatabase.child(formattedDate);
-                                    time.setValue(store);*//*
-
-                                    }
-                                    calculate(percentage);
-                                }
-
-                                */
-                                /*private void calculate(int percent) {
-                                    Log.i("Data outside : ", " onDataChange : "+percent);
-                                    temp = percent;
-                                }*//*
-
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-*/
-
+                String store = storeBO.getStoreName();
+                if(storeName.equalsIgnoreCase(store))
+                {
+                    Log.i("Both Store Equals ",storeName+store);
+                }else{
+                    Log.i("Both Store Differs ",storeName+store);
+                }
                 //*********************************************************************************
                 Log.i("Percentage from Bo ",storeBO.getPercentage());
                 temp = Integer.parseInt(storeBO.getPercentage());
@@ -360,14 +300,6 @@ public class DataServerAsyncTask extends AsyncTask<Void, Void, String> {
                 e.printStackTrace();
             }
         }
-    }
-
-    private void calculate(int percentage) {
-
-    }
-
-    private void updateStoreName(final String storeName) {
-
     }
 
     @Override
