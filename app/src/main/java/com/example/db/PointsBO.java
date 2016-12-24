@@ -9,11 +9,12 @@ import java.util.Calendar;
 
 public class PointsBO {
 
+    private
+    String deviceid;
     String type;
     String billAmount;
     String storeName;
     String points;
-    String deviceId;
     String disCountAmount;
     String time;
 
@@ -21,7 +22,7 @@ public class PointsBO {
             String billAmount,
             String storeName,
             String points,
-            String deviceId,
+            String deviceID,
             String disCountAmount,
             String time){
 
@@ -29,7 +30,7 @@ public class PointsBO {
         this.billAmount =billAmount;
         this.storeName = storeName;
         this.points = points;
-        this.deviceId = deviceId;
+        this.deviceid = deviceID;
         this.disCountAmount = disCountAmount;
 
         //Calendar c = Calendar.getInstance();
@@ -73,11 +74,11 @@ public class PointsBO {
     }
 
     public String getDeviceId() {
-        return deviceId;
+        return deviceid;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setDeviceId(String deviceid) {
+        this.deviceid = deviceid;
     }
 
     public String getDisCountAmount() {

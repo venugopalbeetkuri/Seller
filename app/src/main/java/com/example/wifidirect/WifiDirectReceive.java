@@ -35,17 +35,19 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import com.example.R;
 import com.example.db.PointsBO;
+import com.example.db.StoreBO;
 import com.example.sellerapp.EarnPoints;
 import com.example.sellerapp.RedeemPoints;
 import com.example.sellerapp.ReportActivity;
-import com.example.util.Utility;
 import com.example.wifidirect.Adapter.WifiAdapter;
 import com.example.wifidirect.BroadcastReceiver.WifiDirectBroadcastReceiver;
 import com.example.wifidirect.Service.DataTransferService;
@@ -76,12 +78,22 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     private MenuInflater menuInflater;
     static boolean calledAlready = false;
     private DataServerAsyncTask mDataTask;
+    SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
     private TextView pointsGiven, totalsale = null, totaldiscount = null;
+    String storeName = "storename";
+    String percentage = "10";
     int point;
+    static String store = "teststore";
+    StoreBO storeBO;
     int bil;
     int b;
     int p;
     int d;
+
+    DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference clientDatabase = database.child("client");
+    DatabaseReference storeDatabase = database.child("store");
+    String EmailidDB;
     boolean check= false;
    // ReportActivity reportActivity;
     // For peers information.
@@ -96,13 +108,19 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wifi_direct_client);
-        info = null;
+        final Calendar c = Calendar.getInstance();
 
+        String formattedDate = df.format(c.getTime());
+        final DatabaseReference time = storeDatabase.child(formattedDate);
+
+        info = null;
+        final String storeName = "StoreName";
+        final String percentage = "10";
+        //storeBO = new StoreBO(storeEmail, storeName, percentage);
         if (!calledAlready) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+//            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             calledAlready = true;
         }
 
@@ -117,6 +135,93 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         }
 
         firebaseAuth = FirebaseAuth.getInstance();
+        final String email=firebaseAuth.getCurrentUser().getEmail();
+        final StoreBO storeBO = new StoreBO(email, storeName, percentage);
+
+        //************************************************************************************************
+        try {
+            //String storeName = pointsBO.getStoreName();
+            // Getting firebase auth object.
+            final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            final String storeemail = firebaseAuth.getCurrentUser().getEmail();
+
+            if (firebaseAuth.getCurrentUser() != null) {
+
+                Log.i("Current User ", "Not Null");
+                Query query = database.child("store");
+
+                // Query query = storeDatabase.orderByChild("Earn");
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        boolean found = false;
+
+                        for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
+
+                            HashMap<String, String> timeStampKey = (HashMap) timeStampSnapShot.getValue();
+
+                            EmailidDB = timeStampKey.get("emailId");
+                            Log.i("Email Id from DB", EmailidDB);
+                            Log.i("Local Email Id ",email);
+                            if (EmailidDB.equalsIgnoreCase(email)) {
+                                Log.i("Email ID Equals :", EmailidDB + " ~ " + email);
+                                String Per = timeStampKey.get("percentage");
+                                store = timeStampKey.get("storeName");
+                                storeBO.setStoreName(store);
+                                Log.i("Found Percentage : ", Per);
+                                storeBO.setPercentage(Per);
+                                found=true;
+                                Toast.makeText(getApplicationContext(), " Retrived Percentage : " + Per, Toast.LENGTH_LONG).show();
+                                Log.i("Retrived Percentage : ", Per);
+                                Log.i("Percentage from Bo ",storeBO.getPercentage());
+                                //print(Per);
+                            }
+                        }
+                        if (!found)
+                        {
+                            if (!EmailidDB.equalsIgnoreCase(email)) {
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(WifiDirectReceive.this);
+                                builder.setMessage("Please Contact Bizzmark for percentage changes.")
+                                        .setCancelable(false)
+                                        .setTitle("Warning...!")
+                                        .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                Log.i("Retrive Status : ", "Not Found");
+                                                //Log.i("Store Email ",storeBO.getEmailId());
+                                                time.child("emailId").setValue("Edit email here");
+                                                time.child("percentage").setValue("10");
+                                                time.child("storeName").setValue("storename");
+                                                //Toast.makeText(getApplicationContext(),"Default Percentage is 10%",Toast.LENGTH_LONG).show();
+
+                                            }
+                                        });
+                                AlertDialog alert = builder.create();
+                                alert.show();
+
+                            }
+                        }
+
+                        //calculate(percentage);
+                    }
+
+                    /*private void calculate(int percent) {
+                        Log.i("Data outside : ", " onDataChange : "+percent);
+                        temp = percent;
+                    }*/
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        //************************************************************************************************
 
        //String storeName = getStoreName();
 
@@ -137,10 +242,8 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
             mDataTask = new DataServerAsyncTask(WifiDirectReceive.this);
             mDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference clientDatabase = database.child("client");
-        Query query = clientDatabase.child("storeexample");
+//OVER ALL POINTS DISPLAY IN MAIN SCREEN
+        Query query = clientDatabase.child(store);
         query.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -361,7 +464,6 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
 
             Log.i("bizzmark", "owenerip is " + info.groupOwnerAddress.getHostAddress());
             serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 9999);
-
             // Start service.
             startService(serviceIntent);
 
@@ -475,10 +577,11 @@ public class WifiDirectReceive extends AppCompatActivity implements View.OnClick
         rotation.start();
         refresh.startAnimation(rotation);
 
-            ResetReceiver();
-            //wifiManager.setWifiEnabled(true);
-            //registerReceiver(mReceiver, mFilter);
-            discoverPeers();
+            /*ResetReceiver();
+            discoverPeers();*/
+        finish();
+        Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
+        startActivity(intent);
 
         // New code Start.
 /*        */

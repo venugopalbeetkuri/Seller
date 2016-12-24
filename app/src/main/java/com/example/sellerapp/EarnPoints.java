@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.R;
 import com.example.db.AcknowledgePoints;
@@ -17,7 +16,6 @@ import com.example.db.StoreBO;
 import com.example.login.LoginActivity;
 import com.example.util.Utility;
 import com.example.wifidirect.Service.DataTransferService;
-import com.example.wifidirect.WifiDirectReceive;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,7 +42,7 @@ public class EarnPoints extends AppCompatActivity {
 
     Calendar c = Calendar.getInstance();
     SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-    int allpoint;
+    //int allpoint;
     String earnString = null;
     String remoteMacAddress = null;
 
@@ -72,7 +70,7 @@ public class EarnPoints extends AppCompatActivity {
 
         String storeName = points.getStoreName();
 
-        updateStoreName(storeName);
+        //updateStoreName(storeName);
 
         earnPoints = (TextView) findViewById(R.id.earnPoints);
         billAmount = (TextView) findViewById(R.id.billamount);
@@ -91,7 +89,7 @@ public class EarnPoints extends AppCompatActivity {
             // Getting firebase auth object.
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             final String storeEmail = firebaseAuth.getCurrentUser().getEmail();
-
+            final String percentage = "10";
             // If the objects getcurrentuser method is not null means user is already logged in.
             if (firebaseAuth.getCurrentUser() != null) {
 
@@ -115,7 +113,7 @@ public class EarnPoints extends AppCompatActivity {
                         }
 
                         if(!found) {
-                            StoreBO store = new StoreBO(storeEmail, storeName);
+                            StoreBO store = new StoreBO(storeEmail, storeName, percentage);
                             String formattedDate = df.format(c.getTime());
                             DatabaseReference time = storeDatabase.child(formattedDate);
                             time.setValue(store);
@@ -158,8 +156,8 @@ public class EarnPoints extends AppCompatActivity {
                 sendAcknowledgement(true);
 
                 finish();
-                Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
+                startActivity(intent);*/
 
             }
 
@@ -176,8 +174,8 @@ public class EarnPoints extends AppCompatActivity {
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
 
                 finish();
-                Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
+                startActivity(intent);*/
 
                 // Send acknowledgement to client.
                 sendAcknowledgement(false);
@@ -196,7 +194,7 @@ public class EarnPoints extends AppCompatActivity {
         if(success) {
 
             ack = new AcknowledgePoints("success", earnString);
-            Toast.makeText(getApplicationContext(),"Acknowledgement initiated...",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),"Acknowledgement initiated...",Toast.LENGTH_SHORT).show();
         } else {
 
             ack = new AcknowledgePoints("failure", earnString);

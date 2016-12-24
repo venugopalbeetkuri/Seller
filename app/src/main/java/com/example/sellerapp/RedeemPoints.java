@@ -25,7 +25,7 @@ import java.util.Calendar;
 
 public class RedeemPoints extends AppCompatActivity {
 
-    TextView redeemPoints,billAmount,discountAmount;
+    TextView redeemPoints,billAmount,discountAmount,newBill;
 
     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     DatabaseReference clientDatabase = database.child("client");
@@ -36,7 +36,7 @@ public class RedeemPoints extends AppCompatActivity {
     final static String log = "Seller app";
     PointsBO points = null;
     String redeemString = null;
-
+    String newBillAmount = null;
     String jsonACK = null;
     String remoteMacAddress = null;
 
@@ -52,16 +52,20 @@ public class RedeemPoints extends AppCompatActivity {
 
         remoteMacAddress = intent.getStringExtra("remoteAddress");
 
+        newBillAmount = intent.getStringExtra("newBillAmount");
+
         Gson gson = new Gson();
         points = gson.fromJson(redeemString, PointsBO.class);
 
         billAmount = (TextView) findViewById(R.id.billAmount);
         redeemPoints = (TextView) findViewById(R.id.redeemPoints);
         discountAmount = (TextView) findViewById(R.id.discountAmount);
+        newBill = (TextView)findViewById(R.id.newBillAmount);
 
         billAmount.setText(points.getBillAmount());
         redeemPoints.setText(points.getPoints());
         discountAmount.setText(points.getPoints());
+        newBill.setText(newBillAmount);
 
         addListenerOnAcceptButton();
         addListenerOnCancelButton();
@@ -79,8 +83,6 @@ public class RedeemPoints extends AppCompatActivity {
                 arg0.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation));
 
                 finish();
-                Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
-                startActivity(intent);
 
                 sendAcknowledgement(false);
             }
@@ -100,9 +102,6 @@ public class RedeemPoints extends AppCompatActivity {
                 // Save to database.
                 saveToDataBase();
                 finish();
-                Intent intent = new Intent(getApplicationContext(),WifiDirectReceive.class);
-                startActivity(intent);
-
                 // Send acknowledgement to customer.
                 sendAcknowledgement(true);
             }
