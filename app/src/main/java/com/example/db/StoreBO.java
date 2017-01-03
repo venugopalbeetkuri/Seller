@@ -7,11 +7,13 @@ package com.example.db;
 public class StoreBO {
 
     String emailId;
-    String storeName;
+    static String storeName;
+    static String percentage;
 
-    public StoreBO(String emailId, String storeName){
-        this.emailId = emailId;
+    public StoreBO(String storeEmail, String storeName, String percentage){
+        this.emailId = storeEmail;
         this.storeName = storeName;
+        this.percentage = percentage;
     }
 
     public String getEmailId() {
@@ -22,9 +24,13 @@ public class StoreBO {
         this.emailId = emailId;
     }
 
-    public String getStoreName() { return storeName; }
+    public static String getStoreName() { return storeName; }
 
     public void setStoreName(String storeName) {
         this.storeName = storeName;
     }
+
+    public static String getPercentage() {return percentage;}
+
+    public void  setPercentage(String percentage) { this.percentage=percentage; }
 }

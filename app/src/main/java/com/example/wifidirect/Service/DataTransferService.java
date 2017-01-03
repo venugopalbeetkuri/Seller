@@ -85,7 +85,7 @@ public class DataTransferService extends IntentService {
 
                 outputStream.write(message.getBytes());
 
-                showToast(message);
+                //showToast(message);
 
             } catch (IOException e) {
 

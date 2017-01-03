@@ -5,16 +5,11 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -23,13 +18,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.R;
-import com.example.sellerapp.MainActivity;
+import com.example.db.StoreBO;
 import com.example.wifidirect.WifiDirectReceive;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 public class LoginActivity extends Activity implements View.OnClickListener {
 
@@ -40,6 +43,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private EditText editTextEmail;
     private EditText editTextPassword;
     private TextView textViewSignup;
+    StoreBO storeBO;
+    DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
     private TextView policy,terms;
     //firebase auth object
@@ -111,7 +116,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     //method for user login
     private void userLogin() {
-        String email = editTextEmail.getText().toString().trim();
+        final String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
 
@@ -140,15 +145,73 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         progressDialog.dismiss();
-
+                        //storeBO = new StoreBO(storeEmail, storeName, percentage);
                         // If the task is successful.
                         if (task.isSuccessful()) {
-
                             // start the profile activity finish();
                             editTextEmail.setText("");
                             editTextPassword.setText("");
                             finish();
+//************************************************************************
+                            /*try {
+                                //String storeName = pointsBO.getStoreName();
+                                // Getting firebase auth object.
+                                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                                final String storeEmail = firebaseAuth.getCurrentUser().getEmail();
 
+                                if (firebaseAuth.getCurrentUser() != null) {
+
+                                    Log.i("Current User ", "Not Null");
+                                    Query query = database.child("store");
+
+                                    // Query query = storeDatabase.orderByChild("Earn");
+                                    query.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            boolean found = false;
+                                            for (DataSnapshot timeStampSnapShot : dataSnapshot.getChildren()) {
+
+                                                HashMap<String, String> timeStampKey = (HashMap) timeStampSnapShot.getValue();
+
+                                                String EmailidDB = timeStampKey.get("emailId");
+                                                Log.i("Store Name from DB", EmailidDB);
+                                                Log.i("Local Email Id ",email);
+                                                if (EmailidDB.equalsIgnoreCase(email)) {
+                                                    Log.i("Email ID Equals :", EmailidDB + " ~ " + email);
+                                                    String Per = timeStampKey.get("percentage");
+                                                    Log.i("Found Percentage : ", Per);
+                                                    storeBO.setPercentage(Per);
+                                                    found=true;
+                                                    Toast.makeText(getApplicationContext(), " Retrived Percentage : " + Per, Toast.LENGTH_LONG).show();
+                                                    Log.i("Retrived Percentage : ", Per);
+                                                    Log.i("Percentage from Bo ",storeBO.getPercentage());
+                                                    print(Per);
+                                                }
+                                            }
+                                            if (!found) {
+                                                Log.i("Retrive Status : ", "Not Found");
+                                    *//*StoreBO store = new StoreBO(storeEmail, storeName, percentage);
+                                    String formattedDate = df.format(c.getTime());
+                                    DatabaseReference time = storeDatabase.child(formattedDate);
+                                    time.setValue(store);*//*
+                                            }
+                                            //calculate(percentage);
+                                        }
+
+                                *//*private void calculate(int percent) {
+                                    Log.i("Data outside : ", " onDataChange : "+percent);
+                                    temp = percent;
+                                }*//*
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }*/
+//************************************************************************
                             startActivity(new Intent(getApplicationContext(), WifiDirectReceive.class));
                         } else {
 
@@ -157,7 +220,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                             Toast.makeText(getApplicationContext(),"Please enter your valid Email and Password",Toast.LENGTH_LONG).show();
                         }
                     }
-                });
+        });
 
     }
 
