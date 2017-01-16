@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SellerAppIntegration.iml" filepath="$PROJECT_DIR$/SellerAppIntegration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SellerAppVenkat.iml" filepath="$PROJECT_DIR$/SellerAppVenkat.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

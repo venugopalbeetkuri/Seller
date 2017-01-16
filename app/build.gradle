@@ -5,8 +5,8 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.example.provigil.sellerapp"
-        minSdkVersion 19
+        applicationId "com.example"
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"

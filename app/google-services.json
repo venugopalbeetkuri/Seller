@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "893489102034",
-    "firebase_url": "https://sellerapp-9bd76.firebaseio.com",
-    "project_id": "sellerapp-9bd76",
-    "storage_bucket": "sellerapp-9bd76.appspot.com"
+    "project_number": "904776850245",
+    "firebase_url": "https://smartpoints-8b016.firebaseio.com",
+    "project_id": "smartpoints-8b016",
+    "storage_bucket": "smartpoints-8b016.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:893489102034:android:0c3904977708eed7",
+        "mobilesdk_app_id": "1:904776850245:android:0361d91e71522078",
         "android_client_info": {
-          "package_name": "com.example.provigil.sellerapp"
+          "package_name": "com.example"
         }
       },
       "oauth_client": [
         {
-          "client_id": "893489102034-r072j4kv65bf1ss4smek6reo34ssrja1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.provigil.sellerapp",
-            "certificate_hash": "02676E948B01160808A27890FBA79FBF67E7F3C4"
-          }
-        },
-        {
-          "client_id": "893489102034-43q74oh3fvhvcfpqo5n3jpk4ovdcsn6s.apps.googleusercontent.com",
+          "client_id": "904776850245-ftn23k09te4v8lmduvigev5gvc083gs3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAafsQLq0j6Foj1jnqpao3hFGby9oqI3B8"
+          "current_key": "AIzaSyA3AlX73i4GWducMnzeM1QGXplADNrigBY"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "893489102034-43q74oh3fvhvcfpqo5n3jpk4ovdcsn6s.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
